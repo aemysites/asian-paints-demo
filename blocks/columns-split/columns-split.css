@@ -19,6 +19,38 @@
   display: block;
 }
 
+.columns-split-link {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.2s ease;
+  cursor: pointer;
+}
+
+.columns-split-link:hover {
+  opacity: 0.9;
+}
+
+/* Ensure link content maintains proper layout */
+.columns-split-link > div {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (width >= 900px) {
+  .columns-split-link > div {
+    align-items: center;
+    flex-direction: unset;
+    gap: 48px;
+  }
+
+  .columns-split-link > div > div {
+    flex: 1;
+    order: unset;
+  }
+}
+
 @media (width >= 900px) {
   .columns-split > div {
     align-items: center;

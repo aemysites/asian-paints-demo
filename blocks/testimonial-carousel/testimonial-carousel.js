@@ -39,35 +39,63 @@ export default function decorate(block) {
     slide.className = 'testimonial-slide';
     slide.dataset.index = index;
 
-    // Extract content from section
-    const h3 = section.querySelector('h3');
-    const paragraphs = [...section.querySelectorAll('p')];
+    // Extract content from section - markdown table generates 4 divs per row
+    // Column 0: link with picture, Column 1: quote, Column 2: name, Column 3: location
+    const columns = [...section.querySelectorAll(':scope > div')];
 
-    // Get image and video URL from h3
+    // Get image and video URL from first column
     let imageUrl = '';
     let videoUrl = '';
     let altText = '';
+    let pictureElement = null;
 
-    if (h3) {
-      const link = h3.querySelector('a');
-      const img = h3.querySelector('img');
+    if (columns[0]) {
+      const link = columns[0].querySelector('a');
       if (link) {
         videoUrl = link.href;
-        imageUrl = img ? img.src : '';
-        altText = img ? img.alt : '';
+        const img = link.querySelector('img');
+        pictureElement = link.querySelector('picture');
+        if (img) {
+          imageUrl = img.src;
+          altText = img.alt || '';
+        }
       }
     }
 
-    // Get quote (first paragraph), name (second), location (third)
-    const quote = paragraphs[0] ? paragraphs[0].textContent.trim() : '';
-    const name = paragraphs[1] ? paragraphs[1].textContent.trim() : '';
-    const location = paragraphs[2] ? paragraphs[2].textContent.trim() : '';
+    // Get quote (column 1), name (column 2), location (column 3)
+    const quote = columns[1] ? columns[1].textContent.trim() : '';
+    const name = columns[2] ? columns[2].textContent.trim() : '';
+    const location = columns[3] ? columns[3].textContent.trim() : '';
 
     // Build image wrapper
     const imageWrapper = document.createElement('div');
     imageWrapper.className = 'testimonial-image';
 
-    if (imageUrl) {
+    if (pictureElement) {
+      // Clone and append the picture element from the markdown
+      const clonedPicture = pictureElement.cloneNode(true);
+      imageWrapper.appendChild(clonedPicture);
+
+      if (videoUrl) {
+        // Create play button overlay
+        const playButton = document.createElement('button');
+        playButton.className = 'testimonial-play-button';
+        playButton.setAttribute('aria-label', 'Play video testimonial');
+        playButton.dataset.videoUrl = videoUrl;
+
+        const playIcon = document.createElement('span');
+        playIcon.className = 'play-icon';
+        playIcon.innerHTML = `
+          <svg width="62" height="62" viewBox="0 0 62 62" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="31" cy="31" r="31" fill="white" fill-opacity="0.9"/>
+            <path d="M24 20L42 31L24 42V20Z" fill="#D32F2F"/>
+          </svg>
+        `;
+        playButton.appendChild(playIcon);
+        imageWrapper.appendChild(playButton);
+      }
+    } else if (imageUrl) {
+      // Fallback to creating img if no picture element found
       const img = document.createElement('img');
       img.src = imageUrl;
       img.alt = altText;
@@ -75,7 +103,6 @@ export default function decorate(block) {
       imageWrapper.appendChild(img);
 
       if (videoUrl) {
-        // Create play button overlay
         const playButton = document.createElement('button');
         playButton.className = 'testimonial-play-button';
         playButton.setAttribute('aria-label', 'Play video testimonial');
