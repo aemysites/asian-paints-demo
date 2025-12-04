@@ -69,7 +69,34 @@ export default function decorate(block) {
 
     // Extract logo, video link, title, and description from cell content
     const logo = cell.querySelector('img');
-    const videoLink = cell.querySelector('a[href$=".webm"]');
+    // Look for video links - mp4 or webm
+    let videoSrc = '';
+    let videoLink = cell.querySelector('a[href$=".mp4"]');
+    if (!videoLink) {
+      videoLink = cell.querySelector('a[href$=".webm"]');
+    }
+    // Also check for any anchor that contains .mp4 in href or text
+    if (!videoLink) {
+      const allLinks = cell.querySelectorAll('a');
+      allLinks.forEach((link) => {
+        if (link.href.includes('.mp4') || link.href.includes('.webm')) {
+          videoLink = link;
+        }
+      });
+    }
+    // Get video source from link or try plain text
+    if (videoLink) {
+      videoSrc = videoLink.href;
+    } else {
+      // Check for plain text URL in paragraphs
+      const paragraphs = cell.querySelectorAll('p');
+      paragraphs.forEach((p) => {
+        const text = p.textContent.trim();
+        if (text.includes('.mp4') || text.includes('.webm')) {
+          videoSrc = text;
+        }
+      });
+    }
     const title = cell.querySelector('strong');
     const description = cell.querySelector('em');
 
@@ -85,13 +112,13 @@ export default function decorate(block) {
     const mediaDiv = document.createElement('div');
     mediaDiv.className = 'designer-collections-image';
 
-    if (videoLink) {
+    if (videoSrc) {
       const video = document.createElement('video');
       video.setAttribute('playsinline', '');
       video.setAttribute('muted', '');
       video.setAttribute('loop', '');
       video.setAttribute('autoplay', '');
-      video.src = videoLink.href;
+      video.src = videoSrc;
       video.className = 'designer-collections-video';
       mediaDiv.appendChild(video);
     }
