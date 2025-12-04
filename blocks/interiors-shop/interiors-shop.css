@@ -1,10 +1,17 @@
+.interiors-shop-wrapper {
+  padding:  0 !important;
+}
+
 /* Full-width block */
 .interiors-shop {
   background: #011c5f;
   color: white;
-  padding: 80px 40px;
+  padding: 70px 40px !important;
   width: 100%;
   box-sizing: border-box;
+  padding-right: 4%;
+  padding-left: 4%;
+  border-radius: 10px;
 }
 
 .interiors-shop-grid {
