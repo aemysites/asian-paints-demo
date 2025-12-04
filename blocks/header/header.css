@@ -59,27 +59,32 @@
 /* Brand logo images - make them visible and properly sized */
 .header .header-brands img,
 .header .header-brands picture {
-  display: block;
-  height: 28px;
+  display: block !important;
+  height: 28px !important;
+  min-width: 100px;
   width: auto;
   max-width: 160px;
   object-fit: contain;
 }
 
 .header .header-brands picture img {
-  height: 28px;
+  display: block !important;
+  height: 28px !important;
+  min-width: 100px;
   width: auto;
   object-fit: contain;
 }
 
 /* Ensure images in brand bar are visible - filter for dark background */
-.header .header-brands p:not(:first-child) img {
-  filter: brightness(0) invert(1);
+.header .header-brands p:not(:first-child) img,
+.header .header-brands p:not(:first-child) picture img {
+  filter: brightness(0) invert(1) !important;
 }
 
 /* First brand (white bg) should show normally */
-.header .header-brands p:first-child img {
-  filter: none;
+.header .header-brands p:first-child img,
+.header .header-brands p:first-child picture img {
+  filter: none !important;
 }
 
 /* ========================================
