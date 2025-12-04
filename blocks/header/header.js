@@ -7,13 +7,14 @@ export default async function decorate(block) {
   // Fetch nav content
   const resp = await fetch('/nav.plain.html');
   if (!resp.ok) {
+    // eslint-disable-next-line no-console
     console.error('Failed to load nav:', resp.status);
     return;
   }
 
-  const html = await resp.text();
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, 'text/html');
+    const html = await resp.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
 
   // Get all elements from the nav content
   const allChildren = [...doc.body.children];
@@ -23,17 +24,20 @@ export default async function decorate(block) {
   const paragraphs = allChildren.filter((el) => el.tagName === 'P');
   const lists = allChildren.filter((el) => el.tagName === 'UL');
 
-  // Identify elements:
-  // - Brand logos: images with width > 100
-  // - Main logo: image with width 40-60
-  // - Icon buttons: images with width <= 30
-  // - CTA: paragraph with text link only (no image)
+  // Based on nav structure:
+  // - First 3 paragraphs with images = brand logos
+  // - 4th paragraph with image = main logo
+  // - First UL = main navigation
+  // - Next paragraphs with images = icon buttons (Search, Store, Profile, Cart)
+  // - Paragraph with only text link = CTA button
+  // - Second UL = secondary navigation
 
   const brandLogos = [];
   let mainLogo = null;
   const iconButtons = [];
   let ctaButton = null;
 
+  let imageParaCount = 0;
   paragraphs.forEach((p) => {
     const img = p.querySelector('img');
     const link = p.querySelector('a');
@@ -42,13 +46,15 @@ export default async function decorate(block) {
     if (hasOnlyTextLink) {
       ctaButton = p;
     } else if (img) {
-      const width = parseInt(img.getAttribute('width'), 10) || 0;
-
-      if (width > 100) {
+      imageParaCount += 1;
+      if (imageParaCount <= 3) {
+        // First 3 images are brand logos
         brandLogos.push(p);
-      } else if (width > 40 && width <= 60) {
+      } else if (imageParaCount === 4) {
+        // 4th image is main logo
         mainLogo = p;
-      } else if (width <= 30) {
+  } else {
+        // Rest are icon buttons
         iconButtons.push(p);
       }
     }
@@ -228,9 +234,9 @@ export default async function decorate(block) {
 
   // Resize handler
   window.addEventListener('resize', () => {
-    if (window.innerWidth >= 992) {
+      if (window.innerWidth >= 992) {
       headerMain?.setAttribute('aria-expanded', 'false');
-      document.body.style.overflow = '';
+        document.body.style.overflow = '';
       block.querySelectorAll('.header-nav > li.active').forEach((li) => li.classList.remove('active'));
     }
   });
