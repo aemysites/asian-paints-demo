@@ -1,0 +1,40 @@
+{
+  "variantName": "columns-split",
+  "baseBlock": "columns",
+  "version": "1.0.0",
+  "created": "2025-12-02T07:45:51.206Z",
+  "sourceContext": {
+    "originUrl": "https://www.asianpaints.com/",
+    "originPage": "Asian Paints homepage",
+    "blockPosition": "middle"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "wide",
+    "purpose": "split-layout",
+    "imagePattern": "large"
+  },
+  "contentPattern": {
+    "structure": "side-by-side layout with image + content",
+    "buttonCount": "varies",
+    "imageCount": 1
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "feature showcases",
+      "store locators",
+      "content with supporting imagery",
+      "two-column layouts"
+    ],
+    "notSuitableFor": [
+      "three or more columns",
+      "text-only layouts",
+      "complex nested structures"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/content/index"],
+    "reuseCount": 1,
+    "lastUsed": "2025-12-02T07:45:51.206Z"
+  }
+}

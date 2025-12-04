@@ -1,0 +1,41 @@
+{
+  "variantName": "cards-grid",
+  "baseBlock": "cards",
+  "version": "1.0.0",
+  "created": "2025-12-02T07:45:50.501Z",
+  "sourceContext": {
+    "originUrl": "https://www.asianpaints.com/",
+    "originPage": "Asian Paints homepage",
+    "blockPosition": "multiple sections"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "compact",
+    "purpose": "product-showcase",
+    "imagePattern": "large"
+  },
+  "contentPattern": {
+    "structure": "grid of items with images + headings + descriptions",
+    "buttonCount": "varies",
+    "imageCount": "multiple (1 per card)"
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "product grids",
+      "service showcases",
+      "feature highlights",
+      "category displays",
+      "icon grids with text"
+    ],
+    "notSuitableFor": [
+      "text-only lists",
+      "single item displays",
+      "complex nested layouts"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/content/index"],
+    "reuseCount": 1,
+    "lastUsed": "2025-12-02T07:45:50.501Z"
+  }
+}
