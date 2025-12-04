@@ -1,142 +1,317 @@
-.color-gallery {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
-  align-items: center;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 80px 24px;
+/* Color Gallery - Matching original Asian Paints color-slick-container */
+.color-gallery-container {
+  background: #f5f5f5;
+  padding: 60px 0;
+  overflow: hidden;
 }
 
+.color-gallery-container .color-gallery-wrapper {
+  overflow: visible;
+}
+
+.color-gallery {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+  max-width: none;
+  margin: 0;
+  padding: 20px 0 60px 24px;
+}
+
+/* Remove default block styling */
+.color-gallery > div {
+  display: contents;
+}
+
+/* Override global section margin:auto */
+.section.color-gallery-container > .color-gallery-wrapper {
+  margin: 0 !important;
+  max-width: none !important;
+  width: 100%;
+}
+
+/* Left Container - Text Content */
+.color-gallery-text {
+  flex: 0 0 300px;
+  max-width: 300px;
+}
+
+.color-gallery-text h2,
 .color-gallery-text h3 {
-  color: var(--primary-color);
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-top: 0;
-  margin-bottom: 20px;
-  line-height: 1.2;
+  color: #277bd4;
+  font-size: 54px;
+  font-weight: 800;
+  margin: 0 0 20px 0;
+  line-height: 1.1;
 }
 
 .color-gallery-text p {
-  color: #555;
-  font-size: 1.2rem;
+  color: #425e8e;
+  font-size: 18px;
+  font-weight: 400;
   line-height: 1.6;
-  margin-bottom: 32px;
+  margin: 0 0 28px 0;
 }
 
-.color-gallery-text a {
-  display: inline-block;
-  padding: 14px 32px;
-  background: var(--primary-color);
-  color: white;
-  text-decoration: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
+.color-gallery-text p:last-child {
+  margin-bottom: 0;
 }
 
-.color-gallery-text a:hover {
-  background: var(--accent-color);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 51, 102, 0.2);
+/* Animated Arrow Button - View colour catalogue */
+.color-gallery-text a,
+.color-gallery-text a.button,
+.color-gallery .color-gallery-text a {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 14px 24px !important;
+  background: #fff !important;
+  color: #1a1a1a !important;
+  text-decoration: none !important;
+  border: 1px solid #1a1a1a !important;
+  border-radius: 30px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+  position: relative !important;
+  margin: 0 !important;
 }
 
+.color-gallery-text a::after,
+.color-gallery-text a.button::after {
+  content: '→' !important;
+  display: inline-block !important;
+  transition: transform 0.3s ease !important;
+  font-weight: 400 !important;
+  background: none !important;
+}
+
+.color-gallery-text a:hover,
+.color-gallery-text a.button:hover {
+  background: #1a1a1a !important;
+  color: #fff !important;
+}
+
+.color-gallery-text a:hover::after {
+  transform: translateX(4px);
+}
+
+/* Right Container - Carousel */
 .color-gallery-carousel {
+  flex: 1;
   position: relative;
-}
-
-.color-gallery-carousel-container {
-  position: relative;
-  overflow: hidden;
-  border-radius: 20px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-  max-width: 520px;
+  overflow: visible;
+  min-width: 0;
 }
 
 .color-gallery-carousel-track {
   display: flex;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  gap: 16px;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Color Slick Item - Each Card */
 .color-gallery-slide {
-  min-width: 100%;
-  flex-shrink: 0;
+  flex: 0 0 260px;
+  width: 260px;
+  height: 460px;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: #e0e0e0;
+}
+
+.color-gallery-slide:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Images in slides */
+.color-gallery-slide picture {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .color-gallery-slide img {
   width: 100%;
-  height: auto;
-  display: block;
-  aspect-ratio: 1;
+  height: 100%;
   object-fit: cover;
+  display: block;
+}
+
+/* Navigation Buttons - Bottom right corner */
+.color-gallery-carousel-container {
+  position: relative;
+  overflow: visible;
+  padding-bottom: 70px;
 }
 
 .color-gallery-nav {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
+  bottom: 0;
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  font-size: 28px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
   cursor: pointer;
   z-index: 10;
-  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--primary-color);
-  font-weight: 300;
-  line-height: 1;
+  transition: all 0.3s ease;
 }
 
-.color-gallery-nav:hover {
-  background: white;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+.color-gallery-nav:hover:not(:disabled) {
+  border-color: #1a1a1a;
+  background: #f5f5f5;
+}
+
+.color-gallery-nav:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
 }
 
 .color-gallery-prev {
-  left: 16px;
+  right: 100px;
+}
+
+.color-gallery-prev::before {
+  content: '←';
+  font-size: 18px;
+  font-weight: 400;
+  color: #1a1a1a;
+  line-height: 1;
 }
 
 .color-gallery-next {
-  right: 16px;
+  right: 40px;
 }
 
-/* Mobile responsive */
-@media (width < 900px) {
+.color-gallery-next::before {
+  content: '→';
+  font-size: 18px;
+  font-weight: 400;
+  color: #1a1a1a;
+  line-height: 1;
+}
+
+/* Mobile CTA - hidden by default on desktop */
+.color-gallery .color-gallery-mobile-cta,
+.color-gallery-mobile-cta {
+  display: none !important;
+}
+
+@media (max-width: 991px) {
+  .color-gallery .color-gallery-mobile-cta,
+  .color-gallery-mobile-cta {
+    display: block !important;
+    text-align: center;
+    margin-top: 24px;
+    width: 100%;
+  }
+
+  .color-gallery-mobile-cta a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    background: #277BD4;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .color-gallery-mobile-cta a::after {
+    content: '→';
+  }
+}
+
+/* Mobile Responsive */
+@media (max-width: 991px) {
   .color-gallery {
-    grid-template-columns: 1fr;
-    gap: 40px;
-    padding: 60px 24px;
+    flex-direction: column;
+    padding: 40px 20px;
+    gap: 30px;
+    max-width: 100%;
   }
 
   .color-gallery-text {
+    flex: none;
+    max-width: 100%;
     text-align: center;
   }
 
+  .color-gallery-text h2,
   .color-gallery-text h3 {
-    font-size: 2rem;
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 16px;
   }
 
   .color-gallery-text p {
-    font-size: 1.1rem;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 20px;
+  }
+
+  /* Hide desktop CTA on mobile */
+  .color-gallery-text p:has(a) {
+    display: none;
+  }
+
+  .color-gallery-carousel {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .color-gallery-carousel::-webkit-scrollbar {
+    display: none;
+  }
+
+  .color-gallery-carousel-container {
+    overflow: visible;
+  }
+
+  .color-gallery-carousel-track {
+    gap: 12px;
+    padding: 0 10px;
+  }
+
+  .color-gallery-slide {
+    flex: 0 0 200px;
+    width: 200px;
+    height: 360px;
+    border-radius: 16px;
   }
 
   .color-gallery-nav {
-    width: 40px;
-    height: 40px;
-    font-size: 24px;
+    display: none;
   }
+}
 
-  .color-gallery-prev {
-    left: 8px;
+/* Tablet adjustments */
+@media (min-width: 768px) and (max-width: 991px) {
+  .color-gallery-slide {
+    flex: 0 0 240px;
+    width: 240px;
+    height: 420px;
   }
+}
 
-  .color-gallery-next {
-    right: 8px;
+/* Large desktop */
+@media (min-width: 1400px) {
+  .color-gallery-slide {
+    flex: 0 0 280px;
+    width: 280px;
+    height: 500px;
   }
 }
