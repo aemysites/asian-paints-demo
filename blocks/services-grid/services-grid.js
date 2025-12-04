@@ -17,16 +17,45 @@ export default function decorate(block) {
     // Get all images
     const images = [...servicesCol.querySelectorAll('img')];
 
+    // Map alt text to full service names
+    const serviceNames = {
+      Interior: 'Interior wall paint',
+      Exterior: 'Exterior wall paint',
+      Waterproofing: 'Waterproofing Services',
+      'Wood Finish': 'Wood Solutions',
+    };
+
     if (images.length > 0) {
       // Create grid container
       const gridContainer = document.createElement('div');
       gridContainer.className = 'services-grid-container';
 
-      // Wrap each image in a card
+      // Wrap each image in a card with text and arrow
       images.forEach((img) => {
-        const card = document.createElement('div');
+        const card = document.createElement('a');
         card.className = 'services-grid-card';
-        card.appendChild(img.cloneNode(true));
+        card.href = '#'; // Could be linked to actual service pages
+
+        // Image container
+        const imgContainer = document.createElement('div');
+        imgContainer.className = 'services-grid-card-image';
+        imgContainer.appendChild(img.cloneNode(true));
+
+        // Text container
+        const textContainer = document.createElement('div');
+        textContainer.className = 'services-grid-card-text';
+        const altText = img.alt || 'Service';
+        const serviceName = serviceNames[altText] || altText;
+        textContainer.innerHTML = `<span>${serviceName}</span>`;
+
+        // Arrow
+        const arrow = document.createElement('div');
+        arrow.className = 'services-grid-card-arrow';
+        arrow.innerHTML = '↗';
+
+        card.appendChild(imgContainer);
+        card.appendChild(textContainer);
+        card.appendChild(arrow);
         gridContainer.appendChild(card);
       });
 

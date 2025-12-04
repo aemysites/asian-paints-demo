@@ -168,6 +168,9 @@ async function loadLazy(doc) {
       doc.body.insertBefore(overlay, doc.body.firstChild);
     }
 
+    // Load the CSS
+    loadCSS(`${window.hlx.codeBasePath}/blocks/fixed-color-partner/fixed-color-partner.css`);
+
     // Load the JavaScript
     import('../blocks/fixed-color-partner/fixed-color-partner.js')
       .then((mod) => {
