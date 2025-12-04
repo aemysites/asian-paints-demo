@@ -1,7 +1,7 @@
 /* Featured Products - Full Width Banner Carousel */
 
 .section:has(.featured-products) {
-  padding: 100px 40px 50px;
+  padding: 50px 40px 50px;
 }
 
 .section:has(.featured-products) > div {
