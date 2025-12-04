@@ -1,10 +1,34 @@
 export default function decorate(block) {
+  // Remove dark-blue class from parent section if present (block has its own background)
+  const section = block.closest('.section');
+  if (section) {
+    section.classList.remove('dark-blue');
+    section.style.margin = '0';
+    section.style.padding = '0';
+
+    // Remove constraints from section's wrapper div
+    const sectionWrapper = section.querySelector(':scope > .interiors-shop-wrapper');
+    if (sectionWrapper) {
+      sectionWrapper.style.maxWidth = 'none';
+      sectionWrapper.style.padding = '0';
+      sectionWrapper.style.margin = '0';
+    }
+  }
+
   // Get heading and description
   const heading = block.querySelector('h2, h3, h4');
   const description = block.querySelector('p');
 
   // Get all rows after header
   const rows = [...block.querySelectorAll(':scope > div')];
+
+  // Create main grid (3 columns)
+  const wrapper = document.createElement('div');
+  wrapper.className = 'interiors-shop-grid';
+
+  // Create left column (text + first card)
+  const leftColumn = document.createElement('div');
+  leftColumn.className = 'interiors-shop-left-column';
 
   // Create container for text content
   const textDiv = document.createElement('div');
@@ -20,15 +44,16 @@ export default function decorate(block) {
     textDiv.appendChild(description.cloneNode(true));
   }
 
-  // Create container for cards
-  const cardsDiv = document.createElement('div');
-  cardsDiv.className = 'interiors-shop-cards';
+  leftColumn.appendChild(textDiv);
+
+  // Collect all cards
+  const cards = [];
 
   // Get all service cards (skip first row which has heading/description)
-  rows.slice(1).forEach(row => {
+  rows.slice(1).forEach((row) => {
     const cells = [...row.children];
 
-    cells.forEach(cell => {
+    cells.forEach((cell) => {
       const img = cell.querySelector('img');
       const title = cell.querySelector('strong');
       const desc = cell.querySelector('em');
@@ -45,16 +70,20 @@ export default function decorate(block) {
           card.appendChild(imgDiv);
         }
 
+        // Create content wrapper for text and button
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'interiors-shop-card-content';
+
         if (title) {
           const titleEl = document.createElement('h5');
           titleEl.textContent = title.textContent;
-          card.appendChild(titleEl);
+          contentDiv.appendChild(titleEl);
         }
 
         if (desc) {
           const descEl = document.createElement('p');
           descEl.textContent = desc.textContent;
-          card.appendChild(descEl);
+          contentDiv.appendChild(descEl);
         }
 
         if (link) {
@@ -63,16 +92,35 @@ export default function decorate(block) {
           btn.className = 'interiors-shop-button';
           btn.textContent = link.textContent || 'Explore now';
           btn.innerHTML = `${btn.textContent} <span class="arrow">→</span>`;
-          card.appendChild(btn);
+          contentDiv.appendChild(btn);
         }
 
-        cardsDiv.appendChild(card);
+        card.appendChild(contentDiv);
+        cards.push(card);
       }
     });
   });
 
   // Clear and rebuild block
   block.innerHTML = '';
-  block.appendChild(textDiv);
-  block.appendChild(cardsDiv);
+
+  // Add first card to left column (under text)
+  if (cards.length > 0) {
+    leftColumn.appendChild(cards[0]);
+  }
+  wrapper.appendChild(leftColumn);
+
+  // Add second card as middle column (with stagger offset)
+  if (cards.length > 1) {
+    cards[1].classList.add('card-middle');
+    wrapper.appendChild(cards[1]);
+  }
+
+  // Add third card as right column (at top)
+  if (cards.length > 2) {
+    cards[2].classList.add('card-right');
+    wrapper.appendChild(cards[2]);
+  }
+
+  block.appendChild(wrapper);
 }
