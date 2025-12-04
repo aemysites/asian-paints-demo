@@ -43,8 +43,8 @@
   --heading-font-size-s: 24px;
   --heading-font-size-xs: 22px;
 
-  /* nav height */
-  --nav-height: 64px;
+  /* nav height - accounts for full header (brand bar + main nav + secondary nav) */
+  --nav-height: 160px;
   --header-height: var(--nav-height);
 }
 
@@ -93,7 +93,7 @@ body.appear {
 }
 
 header {
-  height: var(--nav-height);
+  height: auto;
 }
 
 header .header,
