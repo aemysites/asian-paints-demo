@@ -126,20 +126,62 @@ async function loadLazy(doc) {
   loadHeader(doc.querySelector('header'));
   loadFooter(doc.querySelector('footer'));
 
-  // Load fixed color partner overlay (outside main)
-  const fixedColorPartner = doc.querySelector('.fixed-color-partner');
-  if (fixedColorPartner) {
+  // Create and load fixed color partner overlay dynamically
+  const createFixedColorPartner = () => {
+    // Check if overlay already exists
+    if (doc.querySelector('.fixed-color-partner')) return;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'fixed-color-partner';
+    overlay.innerHTML = `
+      <div>
+        <p class="animate-image">
+          <a href="https://www.asianpaints.com/bcci-campaign.html" target="_self" data-attr-ctatitle="View Shades">
+            <picture>
+              <source media="(max-width:575px)" srcset="https://static.asianpaints.com/content/dam/asian_paints/float-cta/bcci-campaign-colour-partner-popup.png">
+              <source media="(min-width:576px) and (max-width:767px)" srcset="https://static.asianpaints.com/content/dam/asian_paints/float-cta/bcci-campaign-colour-partner-popup.png">
+              <source media="(min-width:768px) and (max-width:991px)" srcset="https://static.asianpaints.com/content/dam/asian_paints/float-cta/bcci-campaign-colour-partner-popup.png">
+              <source media="(min-width:992px)" srcset="https://static.asianpaints.com/content/dam/asian_paints/float-cta/bcci-campaign-colour-partner-popup.png">
+              <img loading="lazy" fetchpriority="auto" src="https://static.asianpaints.com/content/dam/asian_paints/float-cta/bcci-campaign-colour-partner-popup.png" alt="BCCI Campaign - Official Colour Partner" title="Asian Paints Official Colour Partner" width="367" height="385">
+            </picture>
+          </a>
+        </p>
+        <p class="fixed-img" data-attr-autoclosetime="8">
+          <picture>
+            <source media="(max-width:575px)" srcset="https://static.asianpaints.com/content/dam/asian_paints/float-cta/bcci-campaign-colour-partner.png">
+            <source media="(min-width:576px) and (max-width:767px)" srcset="https://static.asianpaints.com/content/dam/asian_paints/float-cta/bcci-campaign-colour-partner.png">
+            <source media="(min-width:768px) and (max-width:991px)" srcset="https://static.asianpaints.com/content/dam/asian_paints/float-cta/bcci-campaign-colour-partner.png">
+            <source media="(min-width:992px)" srcset="https://static.asianpaints.com/content/dam/asian_paints/float-cta/bcci-campaign-colour-partner.png">
+            <img loading="lazy" fetchpriority="auto" src="https://static.asianpaints.com/content/dam/asian_paints/float-cta/bcci-campaign-colour-partner.png" alt="Official Colour Partner Badge" title="Click to expand" width="90" height="34">
+          </picture>
+        </p>
+      </div>
+    `;
+
+    // Insert after header
+    const header = doc.querySelector('header');
+    if (header && header.nextSibling) {
+      header.parentNode.insertBefore(overlay, header.nextSibling);
+    } else if (header) {
+      header.parentNode.appendChild(overlay);
+    } else {
+      doc.body.insertBefore(overlay, doc.body.firstChild);
+    }
+
+    // Load the JavaScript
     import('../blocks/fixed-color-partner/fixed-color-partner.js')
       .then((mod) => {
         if (mod.default) {
-          mod.default(fixedColorPartner);
+          mod.default(overlay);
         }
       })
       .catch((error) => {
         // eslint-disable-next-line no-console
         console.error('Failed to load fixed-color-partner', error);
       });
-  }
+  };
+
+  createFixedColorPartner();
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
