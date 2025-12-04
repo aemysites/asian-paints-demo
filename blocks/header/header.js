@@ -12,233 +12,425 @@ export default async function decorate(block) {
     return;
   }
 
-    const html = await resp.text();
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
+  const html = await resp.text();
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
 
-  // nav.plain.html wraps content in a div, get the wrapper's children
-  const wrapper = doc.body.querySelector('div') || doc.body;
-  const allChildren = [...wrapper.children];
-  if (allChildren.length === 0) return;
+  // Get all divs from nav content
+  const divs = [...doc.body.querySelectorAll(':scope > div')];
+  if (divs.length < 4) return;
 
-  // Separate elements by type
-  const paragraphs = allChildren.filter((el) => el.tagName === 'P');
-  const lists = allChildren.filter((el) => el.tagName === 'UL');
+  // Structure:
+  // divs[0] = Brand logos (3 pictures)
+  // divs[1] = Main logo (p), search icon (p), camera icon (p), action icons (ul), CTA button (p)
+  // divs[2] = Home icon (p), Main navigation (ul with dropdowns)
+  // divs[3] = Secondary navigation (ul)
 
-  // Based on nav structure:
-  // - First 3 paragraphs with images = brand logos
-  // - 4th paragraph with image = main logo
-  // - First UL = main navigation
-  // - Next paragraphs with images = icon buttons (Search, Store, Profile, Cart)
-  // - Paragraph with only text link = CTA button
-  // - Second UL = secondary navigation
+  const brandDiv = divs[0];
+  const mainDiv = divs[1];
+  const navDiv = divs[2];
+  const secondaryNavDiv = divs[3];
 
-  const brandLogos = [];
-  let mainLogo = null;
-  const iconButtons = [];
-  let ctaButton = null;
-
-  let imageParaCount = 0;
-  paragraphs.forEach((p) => {
-    const img = p.querySelector('img');
-    const link = p.querySelector('a');
-    const hasOnlyTextLink = link && !img && link.textContent.trim().length > 0;
-
-    if (hasOnlyTextLink) {
-      ctaButton = p;
-    } else if (img) {
-      imageParaCount += 1;
-      if (imageParaCount <= 3) {
-        // First 3 images are brand logos
-        brandLogos.push(p);
-      } else if (imageParaCount === 4) {
-        // 4th image is main logo
-        mainLogo = p;
-  } else {
-        // Rest are icon buttons
-        iconButtons.push(p);
-      }
-    }
-  });
-
-  // Get navigation lists
-  const mainNav = lists.length > 0 ? lists[0] : null;
-  const secondaryNav = lists.length > 1 ? lists[1] : null;
-
-  // Build new structure
+  // Clear block
   block.textContent = '';
 
-  // 1. Brand Bar
-  if (brandLogos.length > 0) {
-    const brandBar = document.createElement('div');
-    brandBar.className = 'header-brands';
+  // ========================================
+  // 1. BRAND BAR (Top - Dark Blue)
+  // ========================================
+  const brandBar = document.createElement('div');
+  brandBar.className = 'header-brands';
 
-    const brandBarInner = document.createElement('div');
-    brandLogos.forEach((logo, idx) => {
-      const p = document.createElement('p');
-      const existingLink = logo.querySelector('a');
+  const brandBarInner = document.createElement('div');
+  const brandLogos = brandDiv.querySelectorAll('p');
 
-      if (existingLink) {
-        p.appendChild(existingLink.cloneNode(true));
-      } else {
-        const link = document.createElement('a');
-        link.href = idx === 0 ? '/' : idx === 1 ? 'https://www.beautifulhomes.asianpaints.com' : 'https://whiteteak.asianpaints.com';
-        const img = logo.querySelector('img');
-        if (img) link.appendChild(img.cloneNode(true));
-        p.appendChild(link);
-      }
-      brandBarInner.appendChild(p);
-    });
+  brandLogos.forEach((logo, idx) => {
+    const brandItem = document.createElement('a');
+    brandItem.className = 'brand-item';
+    if (idx === 0) brandItem.classList.add('active');
 
-    brandBar.appendChild(brandBarInner);
-    block.appendChild(brandBar);
-  }
+    // Set URLs for each brand
+    const urls = ['/', 'https://www.beautifulhomes.asianpaints.com', 'https://whiteteak.asianpaints.com'];
+    brandItem.href = urls[idx] || '#';
 
-  // 2. Main Header
+    const picture = logo.querySelector('picture');
+    if (picture) {
+      brandItem.appendChild(picture.cloneNode(true));
+    }
+
+    brandBarInner.appendChild(brandItem);
+  });
+
+  brandBar.appendChild(brandBarInner);
+  block.appendChild(brandBar);
+
+  // ========================================
+  // 2. MAIN HEADER (White - Logo, Search, Actions, CTA)
+  // ========================================
   const mainHeader = document.createElement('div');
   mainHeader.className = 'header-main';
 
   const mainHeaderInner = document.createElement('div');
 
-  // Logo
-  if (mainLogo) {
-    const logoP = document.createElement('p');
-    logoP.className = 'header-logo';
-    const existingLink = mainLogo.querySelector('a');
-    if (existingLink) {
-      logoP.appendChild(existingLink.cloneNode(true));
-    } else {
-      const link = document.createElement('a');
-      link.href = '/';
-      const img = mainLogo.querySelector('img');
-      if (img) link.appendChild(img.cloneNode(true));
-      logoP.appendChild(link);
+  // Get all paragraphs from mainDiv
+  const mainParagraphs = mainDiv.querySelectorAll('p');
+  // Structure: [0] = main logo, [1] = search icon, [2] = camera icon, [last] = CTA link
+
+  // Main Logo (1st paragraph)
+  if (mainParagraphs[0]) {
+    const logoContainer = document.createElement('a');
+    logoContainer.className = 'header-logo';
+    logoContainer.href = '/';
+    const picture = mainParagraphs[0].querySelector('picture');
+    if (picture) {
+      logoContainer.appendChild(picture.cloneNode(true));
     }
-    mainHeaderInner.appendChild(logoP);
+    mainHeaderInner.appendChild(logoContainer);
   }
 
-  // Navigation
-  if (mainNav) {
-    const nav = mainNav.cloneNode(true);
-    nav.className = 'header-nav';
-    mainHeaderInner.appendChild(nav);
+  // Search Bar
+  const searchBar = document.createElement('div');
+  searchBar.className = 'header-search';
+
+  // Search icon (2nd paragraph from mainDiv)
+  const searchIcon = document.createElement('span');
+  searchIcon.className = 'search-icon';
+  if (mainParagraphs[1]) {
+    const searchPic = mainParagraphs[1].querySelector('picture');
+    if (searchPic) {
+      searchIcon.appendChild(searchPic.cloneNode(true));
+    }
   }
 
-  // Icon Buttons
-  if (iconButtons.length > 0) {
-    const actions = document.createElement('div');
-    actions.className = 'header-actions';
+  const searchInput = document.createElement('input');
+  searchInput.type = 'text';
+  searchInput.placeholder = 'Search for  Colour inspiration';
+  searchInput.className = 'search-input';
 
-    iconButtons.forEach((btn) => {
-      const img = btn.querySelector('img');
-      const alt = img?.getAttribute('alt')?.toLowerCase() || '';
-      const link = document.createElement('a');
+  // Camera icon (3rd paragraph from mainDiv)
+  const cameraBtn = document.createElement('button');
+  cameraBtn.className = 'camera-btn';
+  cameraBtn.type = 'button';
+  cameraBtn.setAttribute('aria-label', 'Search by image');
+  if (mainParagraphs[2]) {
+    const cameraPic = mainParagraphs[2].querySelector('picture');
+    if (cameraPic) {
+      cameraBtn.appendChild(cameraPic.cloneNode(true));
+    }
+  }
 
-      if (alt.includes('search')) link.href = '#search';
-      else if (alt.includes('store')) link.href = '/store-locator';
-      else if (alt.includes('profile')) link.href = '/profile';
-      else if (alt.includes('cart')) link.href = '/cart';
-      else link.href = '#';
+  searchBar.appendChild(searchIcon);
+  searchBar.appendChild(searchInput);
+  searchBar.appendChild(cameraBtn);
+  mainHeaderInner.appendChild(searchBar);
 
-      link.setAttribute('aria-label', img?.getAttribute('alt') || 'Action');
-      if (img) link.appendChild(img.cloneNode(true));
-      actions.appendChild(link);
+  // Action Icons (from UL in mainDiv)
+  const actionsUl = mainDiv.querySelector('ul');
+  if (actionsUl) {
+    const actionsContainer = document.createElement('div');
+    actionsContainer.className = 'header-actions';
+
+    const actionItems = actionsUl.querySelectorAll('li');
+    const actionUrls = ['/store-locator', '/location', '/profile', '/cart'];
+    const actionLabels = ['Store Locator', 'Location', 'Profile', 'Cart'];
+
+    actionItems.forEach((item, idx) => {
+      const actionLink = document.createElement('a');
+      actionLink.href = actionUrls[idx] || '#';
+      actionLink.className = 'action-btn';
+      actionLink.setAttribute('aria-label', actionLabels[idx] || 'Action');
+
+      // Add cart badge for last item
+      if (idx === actionItems.length - 1) {
+        actionLink.classList.add('cart-btn');
+        const badge = document.createElement('span');
+        badge.className = 'cart-badge';
+        badge.textContent = '0';
+        actionLink.appendChild(badge);
+      }
+
+      const picture = item.querySelector('picture');
+      if (picture) {
+        actionLink.insertBefore(picture.cloneNode(true), actionLink.firstChild);
+      }
+
+      actionsContainer.appendChild(actionLink);
     });
 
-    mainHeaderInner.appendChild(actions);
+    mainHeaderInner.appendChild(actionsContainer);
   }
 
   // CTA Button
-  if (ctaButton) {
-    const cta = document.createElement('p');
-    cta.className = 'header-cta';
-    cta.innerHTML = ctaButton.innerHTML;
-    mainHeaderInner.appendChild(cta);
+  const ctaP = mainDiv.querySelector('p:last-of-type a');
+  if (ctaP) {
+    const ctaContainer = document.createElement('div');
+    ctaContainer.className = 'header-cta';
+
+    const ctaLink = document.createElement('a');
+    ctaLink.href = ctaP.getAttribute('href') || '/';
+    ctaLink.className = 'cta-btn';
+    ctaLink.textContent = ctaP.textContent;
+
+    ctaContainer.appendChild(ctaLink);
+    mainHeaderInner.appendChild(ctaContainer);
   }
 
-  // Hamburger
-  const hamburger = document.createElement('p');
+  // Hamburger Menu (for mobile)
+  const hamburger = document.createElement('button');
   hamburger.className = 'nav-hamburger';
-  hamburger.innerHTML = `
-    <button type="button" aria-controls="nav" aria-label="Open navigation" aria-expanded="false">
-      <span class="nav-hamburger-icon"></span>
-    </button>
-  `;
+  hamburger.type = 'button';
+  hamburger.setAttribute('aria-controls', 'nav');
+  hamburger.setAttribute('aria-label', 'Open navigation');
+  hamburger.setAttribute('aria-expanded', 'false');
+  hamburger.innerHTML = '<span class="hamburger-icon"></span>';
   mainHeaderInner.appendChild(hamburger);
 
   mainHeader.appendChild(mainHeaderInner);
-  block.appendChild(mainHeader);
 
-  // 3. Secondary Navigation
-  if (secondaryNav) {
-    const secNav = document.createElement('div');
-    secNav.className = 'header-secondary-nav';
-    const secNavInner = document.createElement('div');
-    secNavInner.appendChild(secondaryNav.cloneNode(true));
-    secNav.appendChild(secNavInner);
-    block.appendChild(secNav);
+  // Create sticky wrapper for main header and nav bar
+  const stickyWrapper = document.createElement('div');
+  stickyWrapper.className = 'header-sticky';
+  stickyWrapper.appendChild(mainHeader);
+
+  // ========================================
+  // 3. NAVIGATION BAR (Main + Secondary Nav)
+  // ========================================
+  const navBar = document.createElement('div');
+  navBar.className = 'header-nav-bar';
+
+  const navBarInner = document.createElement('div');
+
+  // Left side: Home icon + Main Navigation
+  const navLeft = document.createElement('div');
+  navLeft.className = 'nav-left';
+
+  // Home icon (first paragraph with picture in navDiv)
+  const homeIconP = navDiv.querySelector('p');
+  if (homeIconP) {
+    const homeLink = document.createElement('a');
+    homeLink.href = '/';
+    homeLink.className = 'nav-home';
+    homeLink.setAttribute('aria-label', 'Home');
+    const homePic = homeIconP.querySelector('picture');
+    if (homePic) {
+      homeLink.appendChild(homePic.cloneNode(true));
+    }
+    navLeft.appendChild(homeLink);
   }
 
-  // Setup interactions
-  // Mobile menu toggle
-  const hamburgerBtn = block.querySelector('.nav-hamburger button');
-  const headerMain = block.querySelector('.header-main');
+  // Main Navigation
+  const mainNavUl = navDiv.querySelector('ul');
+  if (mainNavUl) {
+    const nav = document.createElement('nav');
+    nav.className = 'main-nav';
 
-  if (hamburgerBtn && headerMain) {
+    const navList = document.createElement('ul');
+    navList.className = 'nav-list';
+
+    const mainNavItems = mainNavUl.querySelectorAll(':scope > li');
+    mainNavItems.forEach((item) => {
+      const li = document.createElement('li');
+      li.className = 'nav-item';
+
+      const linkP = item.querySelector(':scope > p > a');
+      if (linkP) {
+        const link = document.createElement('a');
+        link.href = linkP.getAttribute('href') || '#';
+        link.className = 'nav-link';
+        link.textContent = linkP.textContent;
+
+        // Check for dropdown
+        const submenu = item.querySelector(':scope > ul');
+        if (submenu) {
+          li.classList.add('has-dropdown');
+          link.innerHTML += `<svg class="dropdown-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>`;
+
+          // Build dropdown
+          const dropdown = document.createElement('div');
+          dropdown.className = 'nav-dropdown';
+
+          const dropdownInner = document.createElement('div');
+          dropdownInner.className = 'dropdown-inner';
+
+          const submenuItems = submenu.querySelectorAll(':scope > li');
+          submenuItems.forEach((subItem) => {
+            const column = document.createElement('div');
+            column.className = 'dropdown-column';
+
+            // Category title
+            const titleStrong = subItem.querySelector(':scope > p > strong');
+            if (titleStrong) {
+              const title = document.createElement('h4');
+              title.className = 'dropdown-title';
+              title.textContent = titleStrong.textContent;
+              column.appendChild(title);
+            }
+
+            // Submenu links
+            const subLinks = subItem.querySelector(':scope > ul');
+            if (subLinks) {
+              const linkList = document.createElement('ul');
+              linkList.className = 'dropdown-links';
+
+              subLinks.querySelectorAll('li').forEach((linkItem) => {
+                const linkLi = document.createElement('li');
+                const linkA = linkItem.querySelector('a');
+                if (linkA) {
+                  const a = document.createElement('a');
+                  a.href = linkA.getAttribute('href') || '#';
+                  a.textContent = linkA.textContent;
+                  linkLi.appendChild(a);
+                }
+                linkList.appendChild(linkLi);
+              });
+
+              column.appendChild(linkList);
+            }
+
+            dropdownInner.appendChild(column);
+          });
+
+          dropdown.appendChild(dropdownInner);
+          li.appendChild(link);
+          li.appendChild(dropdown);
+        } else {
+          li.appendChild(link);
+        }
+      }
+
+      navList.appendChild(li);
+    });
+
+    nav.appendChild(navList);
+    navLeft.appendChild(nav);
+  }
+
+  navBarInner.appendChild(navLeft);
+
+  // Right side: Secondary Navigation
+  const secondaryNavUl = secondaryNavDiv.querySelector('ul');
+  if (secondaryNavUl) {
+    const navRight = document.createElement('div');
+    navRight.className = 'nav-right';
+
+    const secNav = document.createElement('nav');
+    secNav.className = 'secondary-nav';
+
+    const secNavList = document.createElement('ul');
+    secNavList.className = 'secondary-nav-list';
+
+    secondaryNavUl.querySelectorAll('li').forEach((item) => {
+      const li = document.createElement('li');
+      const linkA = item.querySelector('a');
+      if (linkA) {
+        const a = document.createElement('a');
+        a.href = linkA.getAttribute('href') || '#';
+        a.textContent = linkA.textContent;
+        li.appendChild(a);
+      }
+      secNavList.appendChild(li);
+    });
+
+    secNav.appendChild(secNavList);
+    navRight.appendChild(secNav);
+    navBarInner.appendChild(navRight);
+  }
+
+  navBar.appendChild(navBarInner);
+  stickyWrapper.appendChild(navBar);
+  block.appendChild(stickyWrapper);
+
+  // ========================================
+  // INTERACTIONS
+  // ========================================
+
+  // Mobile menu toggle
+  const hamburgerBtn = block.querySelector('.nav-hamburger');
+  const headerNavBar = block.querySelector('.header-nav-bar');
+
+  if (hamburgerBtn && headerNavBar) {
     hamburgerBtn.addEventListener('click', () => {
-      const expanded = headerMain.getAttribute('aria-expanded') === 'true';
-      headerMain.setAttribute('aria-expanded', String(!expanded));
+      const expanded = hamburgerBtn.getAttribute('aria-expanded') === 'true';
       hamburgerBtn.setAttribute('aria-expanded', String(!expanded));
+      headerNavBar.classList.toggle('mobile-open', !expanded);
       document.body.style.overflow = expanded ? '' : 'hidden';
     });
   }
 
-  // Desktop dropdowns
-  block.querySelectorAll('.header-nav > li').forEach((item) => {
-    const submenu = item.querySelector('ul');
-    if (submenu) {
-      item.addEventListener('mouseenter', () => {
-        if (window.innerWidth >= 992) item.classList.add('active');
-      });
-      item.addEventListener('mouseleave', () => {
-        if (window.innerWidth >= 992) item.classList.remove('active');
-      });
-
-      // Mobile toggle
-      const link = item.querySelector(':scope > p > a');
-      if (link) {
-        link.addEventListener('click', (e) => {
-          if (window.innerWidth < 992) {
-            e.preventDefault();
-            item.classList.toggle('active');
-          }
-        });
+  // Desktop dropdown hover
+  block.querySelectorAll('.nav-item.has-dropdown').forEach((item) => {
+    item.addEventListener('mouseenter', () => {
+      if (window.innerWidth >= 992) {
+        item.classList.add('active');
       }
+    });
+
+    item.addEventListener('mouseleave', () => {
+      if (window.innerWidth >= 992) {
+        item.classList.remove('active');
+      }
+    });
+
+    // Mobile click toggle
+    const link = item.querySelector('.nav-link');
+    if (link) {
+      link.addEventListener('click', (e) => {
+        if (window.innerWidth < 992) {
+          e.preventDefault();
+          item.classList.toggle('active');
+        }
+      });
     }
   });
 
-  // Sticky header
-  const header = block.closest('header');
-  let lastScroll = 0;
+  // Position sticky header below brands bar, adjust on scroll
+  const stickyHeader = block.querySelector('.header-sticky');
+  const brandsBar = block.querySelector('.header-brands');
 
-  window.addEventListener('scroll', () => {
-    const scroll = window.pageYOffset;
-    if (scroll > 60) header?.classList.add('scrolled');
-    else header?.classList.remove('scrolled');
+  const updateStickyPosition = () => {
+    if (!stickyHeader || !brandsBar) return;
 
-    if (window.innerWidth >= 992) {
-      if (scroll > lastScroll && scroll > 200) header?.classList.add('header-hidden');
-      else header?.classList.remove('header-hidden');
-    }
-    lastScroll = scroll;
-  });
+    const brandsHeight = brandsBar.offsetHeight;
+    const scrollY = window.scrollY || window.pageYOffset;
+
+    // Calculate top position: starts at brandsHeight, decreases to 0 as you scroll
+    const topPosition = Math.max(0, brandsHeight - scrollY);
+    stickyHeader.style.top = `${topPosition}px`;
+
+    // Add margin to brands bar to make space for content below fixed header
+    const stickyHeight = stickyHeader.offsetHeight;
+    brandsBar.style.marginBottom = `${stickyHeight}px`;
+  };
+
+  // Initial calculation
+  updateStickyPosition();
+
+  // Update on scroll
+  window.addEventListener('scroll', updateStickyPosition, { passive: true });
+
+  // Recalculate on resize
+  window.addEventListener('resize', updateStickyPosition);
 
   // Resize handler
   window.addEventListener('resize', () => {
-      if (window.innerWidth >= 992) {
-      headerMain?.setAttribute('aria-expanded', 'false');
-        document.body.style.overflow = '';
-      block.querySelectorAll('.header-nav > li.active').forEach((li) => li.classList.remove('active'));
+    if (window.innerWidth >= 992) {
+      hamburgerBtn?.setAttribute('aria-expanded', 'false');
+      headerNavBar?.classList.remove('mobile-open');
+      document.body.style.overflow = '';
+      block.querySelectorAll('.nav-item.active').forEach((li) => li.classList.remove('active'));
     }
   });
+
+  // Search input focus effect
+  const searchInput2 = block.querySelector('.search-input');
+  const searchBar2 = block.querySelector('.header-search');
+  if (searchInput2 && searchBar2) {
+    searchInput2.addEventListener('focus', () => {
+      searchBar2.classList.add('focused');
+    });
+    searchInput2.addEventListener('blur', () => {
+      searchBar2.classList.remove('focused');
+    });
+  }
 }
