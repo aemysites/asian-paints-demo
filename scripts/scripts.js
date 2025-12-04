@@ -126,6 +126,21 @@ async function loadLazy(doc) {
   loadHeader(doc.querySelector('header'));
   loadFooter(doc.querySelector('footer'));
 
+  // Load fixed color partner overlay (outside main)
+  const fixedColorPartner = doc.querySelector('.fixed-color-partner');
+  if (fixedColorPartner) {
+    import('../blocks/fixed-color-partner/fixed-color-partner.js')
+      .then((mod) => {
+        if (mod.default) {
+          mod.default(fixedColorPartner);
+        }
+      })
+      .catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error('Failed to load fixed-color-partner', error);
+      });
+  }
+
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
 }
