@@ -1,143 +1,152 @@
 /**
- * Asian Paints Header - Transforms flat EDS structure into styled layout
+ * Asian Paints Header Block
+ * Transforms flat EDS structure into styled 3-tier layout
  * @param {Element} block The header block element
  */
 export default async function decorate(block) {
-  // Get the content div (second child of block)
+  // Get the rows from the block
   const rows = [...block.children];
-  const contentRow = rows[1]; // The row with all the content
+  if (rows.length < 2) return;
 
+  // Content is in the second row
+  const contentRow = rows[1];
   if (!contentRow) return;
 
-  const children = [...contentRow.children];
+  // Get all direct children
+  const allChildren = [...contentRow.children];
+  if (allChildren.length === 0) return;
 
-  // Find all elements by type
-  const paragraphs = children.filter((el) => el.tagName === 'P');
-  const lists = children.filter((el) => el.tagName === 'UL');
+  // Separate elements by type
+  const paragraphs = allChildren.filter((el) => el.tagName === 'P');
+  const lists = allChildren.filter((el) => el.tagName === 'UL');
 
-  // Identify elements by their content/position
-  // First 3 paragraphs with pictures are brand logos
-  // 4th paragraph with picture is main logo
-  // Paragraphs with icons (small images) are action buttons
-  // Paragraph with text link is CTA
-  // First UL is main nav, second UL is secondary nav
+  // Identify brand logos (first 3 images with width > 100)
+  // Main logo (image with width ~50)
+  // Icon buttons (images with width ~24)
+  // CTA (paragraph with just a text link, no image)
 
   const brandLogos = [];
-  const mainLogo = { element: null };
+  let mainLogo = null;
   const iconButtons = [];
-  const ctaButton = { element: null };
+  let ctaButton = null;
 
-  paragraphs.forEach((p, index) => {
+  paragraphs.forEach((p) => {
     const img = p.querySelector('img');
     const link = p.querySelector('a');
+    const hasOnlyTextLink = link && !img && link.textContent.trim().length > 0;
 
-    if (img) {
+    if (hasOnlyTextLink) {
+      ctaButton = p;
+    } else if (img) {
       const width = parseInt(img.getAttribute('width'), 10) || 0;
       const height = parseInt(img.getAttribute('height'), 10) || 0;
 
-      // Brand logos are wider (129x22), main logo is square-ish (50x32)
-      if (width > 100 && height < 30) {
+      if (width > 100) {
         brandLogos.push(p);
-      } else if (width <= 60 && height <= 48 && width > 24) {
-        mainLogo.element = p;
-      } else if (width <= 24 && height <= 24) {
+      } else if (width > 40 && width <= 60) {
+        mainLogo = p;
+      } else if (width <= 30) {
         iconButtons.push(p);
       }
-    } else if (link && !img) {
-      // Text link without image is CTA
-      ctaButton.element = p;
     }
   });
 
-  const mainNav = lists[0];
-  const secondaryNav = lists[1];
+  // Get navigation lists
+  const mainNav = lists.length > 0 ? lists[0] : null;
+  const secondaryNav = lists.length > 1 ? lists[1] : null;
 
-  // Clear the block
-  block.innerHTML = '';
+  // Build new structure
+  const fragment = document.createDocumentFragment();
 
-  // Create Brand Bar
-  const brandBar = document.createElement('div');
-  brandBar.className = 'header-brands';
-  const brandBarInner = document.createElement('div');
-  brandLogos.forEach((logo, index) => {
-    const wrapper = document.createElement('p');
-    wrapper.innerHTML = logo.innerHTML;
-    // Wrap in link if not already
-    if (!wrapper.querySelector('a')) {
-      const link = document.createElement('a');
-      if (index === 0) {
-        link.href = '/';
-      } else if (index === 1) {
-        link.href = 'https://www.beautifulhomes.asianpaints.com';
+  // 1. Brand Bar
+  if (brandLogos.length > 0) {
+    const brandBar = document.createElement('div');
+    brandBar.className = 'header-brands';
+
+    const brandBarInner = document.createElement('div');
+    brandLogos.forEach((logo, idx) => {
+      const p = document.createElement('p');
+      const existingLink = logo.querySelector('a');
+
+      if (existingLink) {
+        p.appendChild(existingLink.cloneNode(true));
       } else {
-        link.href = 'https://whiteteak.asianpaints.com';
+        const link = document.createElement('a');
+        link.href = idx === 0 ? '/' : idx === 1 ? 'https://www.beautifulhomes.asianpaints.com' : 'https://whiteteak.asianpaints.com';
+        const img = logo.querySelector('img');
+        if (img) link.appendChild(img.cloneNode(true));
+        p.appendChild(link);
       }
-      link.innerHTML = wrapper.innerHTML;
-      wrapper.innerHTML = '';
-      wrapper.appendChild(link);
-    }
-    brandBarInner.appendChild(wrapper);
-  });
-  brandBar.appendChild(brandBarInner);
-  block.appendChild(brandBar);
+      brandBarInner.appendChild(p);
+    });
 
-  // Create Main Header
+    brandBar.appendChild(brandBarInner);
+    fragment.appendChild(brandBar);
+  }
+
+  // 2. Main Header
   const mainHeader = document.createElement('div');
   mainHeader.className = 'header-main';
+
   const mainHeaderInner = document.createElement('div');
 
-  // Add main logo
-  if (mainLogo.element) {
-    const logoWrapper = document.createElement('p');
-    logoWrapper.className = 'header-logo';
-    // Wrap in link
-    const logoLink = document.createElement('a');
-    logoLink.href = '/';
-    logoLink.innerHTML = mainLogo.element.innerHTML;
-    logoWrapper.appendChild(logoLink);
-    mainHeaderInner.appendChild(logoWrapper);
-  }
-
-  // Add main navigation
-  if (mainNav) {
-    mainNav.className = 'header-nav';
-    mainHeaderInner.appendChild(mainNav);
-  }
-
-  // Add icon buttons
-  const actionsWrapper = document.createElement('div');
-  actionsWrapper.className = 'header-actions';
-  iconButtons.forEach((btn) => {
-    const img = btn.querySelector('img');
-    const alt = img?.getAttribute('alt') || '';
-    const wrapper = document.createElement('a');
-    wrapper.href = '#';
-    wrapper.setAttribute('aria-label', alt);
-
-    if (alt.toLowerCase().includes('search')) {
-      wrapper.href = '#search';
-    } else if (alt.toLowerCase().includes('store')) {
-      wrapper.href = '/store-locator';
-    } else if (alt.toLowerCase().includes('profile')) {
-      wrapper.href = '/profile';
-    } else if (alt.toLowerCase().includes('cart')) {
-      wrapper.href = '/cart';
+  // Logo
+  if (mainLogo) {
+    const logoP = document.createElement('p');
+    logoP.className = 'header-logo';
+    const existingLink = mainLogo.querySelector('a');
+    if (existingLink) {
+      logoP.appendChild(existingLink.cloneNode(true));
+    } else {
+      const link = document.createElement('a');
+      link.href = '/';
+      const img = mainLogo.querySelector('img');
+      if (img) link.appendChild(img.cloneNode(true));
+      logoP.appendChild(link);
     }
-
-    wrapper.innerHTML = btn.innerHTML;
-    actionsWrapper.appendChild(wrapper);
-  });
-  mainHeaderInner.appendChild(actionsWrapper);
-
-  // Add CTA button
-  if (ctaButton.element) {
-    const ctaWrapper = document.createElement('p');
-    ctaWrapper.className = 'header-cta';
-    ctaWrapper.innerHTML = ctaButton.element.innerHTML;
-    mainHeaderInner.appendChild(ctaWrapper);
+    mainHeaderInner.appendChild(logoP);
   }
 
-  // Add hamburger menu
+  // Navigation
+  if (mainNav) {
+    const nav = mainNav.cloneNode(true);
+    nav.className = 'header-nav';
+    mainHeaderInner.appendChild(nav);
+  }
+
+  // Icon Buttons
+  if (iconButtons.length > 0) {
+    const actions = document.createElement('div');
+    actions.className = 'header-actions';
+
+    iconButtons.forEach((btn) => {
+      const img = btn.querySelector('img');
+      const alt = img?.getAttribute('alt')?.toLowerCase() || '';
+      const link = document.createElement('a');
+
+      if (alt.includes('search')) link.href = '#search';
+      else if (alt.includes('store')) link.href = '/store-locator';
+      else if (alt.includes('profile')) link.href = '/profile';
+      else if (alt.includes('cart')) link.href = '/cart';
+      else link.href = '#';
+
+      link.setAttribute('aria-label', img?.getAttribute('alt') || 'Action');
+      if (img) link.appendChild(img.cloneNode(true));
+      actions.appendChild(link);
+    });
+
+    mainHeaderInner.appendChild(actions);
+  }
+
+  // CTA Button
+  if (ctaButton) {
+    const cta = document.createElement('p');
+    cta.className = 'header-cta';
+    cta.innerHTML = ctaButton.innerHTML;
+    mainHeaderInner.appendChild(cta);
+  }
+
+  // Hamburger
   const hamburger = document.createElement('p');
   hamburger.className = 'nav-hamburger';
   hamburger.innerHTML = `
@@ -148,95 +157,86 @@ export default async function decorate(block) {
   mainHeaderInner.appendChild(hamburger);
 
   mainHeader.appendChild(mainHeaderInner);
-  block.appendChild(mainHeader);
+  fragment.appendChild(mainHeader);
 
-  // Create Secondary Navigation
+  // 3. Secondary Navigation
   if (secondaryNav) {
-    const secondaryNavWrapper = document.createElement('div');
-    secondaryNavWrapper.className = 'header-secondary-nav';
-    const secondaryNavInner = document.createElement('div');
-    secondaryNavInner.appendChild(secondaryNav);
-    secondaryNavWrapper.appendChild(secondaryNavInner);
-    block.appendChild(secondaryNavWrapper);
+    const secNav = document.createElement('div');
+    secNav.className = 'header-secondary-nav';
+    const secNavInner = document.createElement('div');
+    secNavInner.appendChild(secondaryNav.cloneNode(true));
+    secNav.appendChild(secNavInner);
+    fragment.appendChild(secNav);
   }
 
-  // Setup mobile menu toggle
-  const hamburgerBtn = block.querySelector('.nav-hamburger button');
-  const headerMain = block.querySelector('.header-main');
+  // Replace block content
+  block.textContent = '';
+  block.appendChild(fragment);
 
-  if (hamburgerBtn && headerMain) {
-    hamburgerBtn.addEventListener('click', () => {
-      const isExpanded = headerMain.getAttribute('aria-expanded') === 'true';
-      headerMain.setAttribute('aria-expanded', !isExpanded);
-      hamburgerBtn.setAttribute('aria-expanded', !isExpanded);
-      document.body.style.overflow = isExpanded ? '' : 'hidden';
-    });
-  }
+  // Setup interactions
+  const setupInteractions = () => {
+    // Mobile menu toggle
+    const hamburgerBtn = block.querySelector('.nav-hamburger button');
+    const headerMain = block.querySelector('.header-main');
 
-  // Setup desktop navigation dropdowns
-  const navItems = block.querySelectorAll('.header-nav > li');
-  navItems.forEach((item) => {
-    const submenu = item.querySelector('ul');
-
-    if (submenu) {
-      // Desktop hover
-      item.addEventListener('mouseenter', () => {
-        if (window.innerWidth >= 992) {
-          item.classList.add('active');
-        }
+    if (hamburgerBtn && headerMain) {
+      hamburgerBtn.addEventListener('click', () => {
+        const expanded = headerMain.getAttribute('aria-expanded') === 'true';
+        headerMain.setAttribute('aria-expanded', String(!expanded));
+        hamburgerBtn.setAttribute('aria-expanded', String(!expanded));
+        document.body.style.overflow = expanded ? '' : 'hidden';
       });
+    }
 
-      item.addEventListener('mouseleave', () => {
-        if (window.innerWidth >= 992) {
-          item.classList.remove('active');
-        }
-      });
-
-      // Mobile click
-      const link = item.querySelector(':scope > p > a, :scope > a');
-      if (link) {
-        link.addEventListener('click', (e) => {
-          if (window.innerWidth < 992) {
-            e.preventDefault();
-            item.classList.toggle('active');
-          }
+    // Desktop dropdowns
+    block.querySelectorAll('.header-nav > li').forEach((item) => {
+      const submenu = item.querySelector('ul');
+      if (submenu) {
+        item.addEventListener('mouseenter', () => {
+          if (window.innerWidth >= 992) item.classList.add('active');
         });
+        item.addEventListener('mouseleave', () => {
+          if (window.innerWidth >= 992) item.classList.remove('active');
+        });
+
+        // Mobile toggle
+        const link = item.querySelector(':scope > p > a');
+        if (link) {
+          link.addEventListener('click', (e) => {
+            if (window.innerWidth < 992) {
+              e.preventDefault();
+              item.classList.toggle('active');
+            }
+          });
+        }
       }
-    }
-  });
+    });
 
-  // Sticky header behavior
-  let lastScroll = 0;
-  const headerElement = block.closest('header');
+    // Sticky header
+    const header = block.closest('header');
+    let lastScroll = 0;
 
-  window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset;
+    window.addEventListener('scroll', () => {
+      const scroll = window.pageYOffset;
+      if (scroll > 60) header?.classList.add('scrolled');
+      else header?.classList.remove('scrolled');
 
-    if (currentScroll > 60) {
-      headerElement?.classList.add('scrolled');
-    } else {
-      headerElement?.classList.remove('scrolled');
-    }
-
-    if (window.innerWidth >= 992) {
-      if (currentScroll > lastScroll && currentScroll > 200) {
-        headerElement?.classList.add('header-hidden');
-      } else {
-        headerElement?.classList.remove('header-hidden');
+      if (window.innerWidth >= 992) {
+        if (scroll > lastScroll && scroll > 200) header?.classList.add('header-hidden');
+        else header?.classList.remove('header-hidden');
       }
-    }
+      lastScroll = scroll;
+    });
 
-    lastScroll = currentScroll;
-  });
-
-  // Handle resize
+    // Resize handler
   window.addEventListener('resize', () => {
-    if (window.innerWidth >= 992) {
-      headerMain?.setAttribute('aria-expanded', 'false');
-      document.body.style.overflow = '';
-      block.querySelectorAll('.header-nav > li.active').forEach((item) => {
-        item.classList.remove('active');
-      });
-    }
-  });
+      if (window.innerWidth >= 992) {
+        headerMain?.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+        block.querySelectorAll('.header-nav > li.active').forEach((li) => li.classList.remove('active'));
+      }
+    });
+  };
+
+  setupInteractions();
 }
