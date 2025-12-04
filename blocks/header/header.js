@@ -16,8 +16,9 @@ export default async function decorate(block) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
 
-  // Get all elements from the nav content
-  const allChildren = [...doc.body.children];
+  // nav.plain.html wraps content in a div, get the wrapper's children
+  const wrapper = doc.body.querySelector('div') || doc.body;
+  const allChildren = [...wrapper.children];
   if (allChildren.length === 0) return;
 
   // Separate elements by type
