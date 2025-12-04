@@ -60,14 +60,26 @@
 .header .header-brands img,
 .header .header-brands picture {
   display: block;
-  height: 24px;
+  height: 28px;
   width: auto;
-  max-width: 140px;
+  max-width: 160px;
+  object-fit: contain;
 }
 
 .header .header-brands picture img {
-  height: 24px;
+  height: 28px;
   width: auto;
+  object-fit: contain;
+}
+
+/* Ensure images in brand bar are visible - filter for dark background */
+.header .header-brands p:not(:first-child) img {
+  filter: brightness(0) invert(1);
+}
+
+/* First brand (white bg) should show normally */
+.header .header-brands p:first-child img {
+  filter: none;
 }
 
 /* ========================================
@@ -103,13 +115,16 @@
 .header .header-logo img,
 .header .header-logo picture {
   display: block;
-  height: 44px;
+  height: 40px;
   width: auto;
+  max-width: 180px;
+  object-fit: contain;
 }
 
 .header .header-logo picture img {
-  height: 44px;
+  height: 40px;
   width: auto;
+  object-fit: contain;
 }
 
 /* ========================================
@@ -261,7 +276,7 @@
 }
 
 .header .header-cta a {
-  background: linear-gradient(135deg, #ff5c35 0%, #ff7849 100%);
+  background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
   color: #fff;
   padding: 14px 24px;
   border-radius: 28px;
@@ -272,13 +287,13 @@
   align-items: center;
   white-space: nowrap;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(255, 92, 53, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 184, 148, 0.3);
 }
 
 .header .header-cta a:hover {
-  background: linear-gradient(135deg, #ff4722 0%, #ff6b3d 100%);
+  background: linear-gradient(135deg, #00a187 0%, #00b5b5 100%);
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(255, 92, 53, 0.4);
+  box-shadow: 0 6px 16px rgba(0, 184, 148, 0.4);
 }
 
 /* ========================================
