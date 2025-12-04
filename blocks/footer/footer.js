@@ -2,7 +2,24 @@
  * loads and decorates the footer
  * @param {Element} block The footer block element
  */
-export default function decorate(block) {
+export default async function decorate(block) {
+  // Fetch footer content
+  const resp = await fetch('/footer.plain.html');
+  if (resp.ok) {
+    const html = await resp.text();
+    // Parse the HTML and get the content from body > div sections
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const sections = doc.querySelectorAll('body > div');
+
+    // Add the sections to the block
+    sections.forEach(section => {
+      block.appendChild(section.cloneNode(true));
+    });
+  } else {
+    console.error('Failed to load footer.plain.html:', resp.status);
+  }
+
   // Footer dropdown functionality for mobile
   const dropdownButtons = block.querySelectorAll('.footer-menu-dropdown');
   dropdownButtons.forEach((button) => {
