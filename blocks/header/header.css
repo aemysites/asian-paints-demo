@@ -9,7 +9,7 @@ header .header-brands {
   width: 100%;
 }
 
-header .header-brands > div {
+header .header-brands>div {
   display: flex;
   justify-content: center;
   align-items: stretch;
@@ -19,7 +19,16 @@ header .header-brands > div {
   padding: 0;
 }
 
-header .header-brands > div > p {
+header .header-brands>div>p {
+  margin: 0;
+  padding: 0;
+  gap: 0;
+  max-width: 1264px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+header .header-brands>div>p {
   margin: 0;
   padding: 0;
   display: flex;
@@ -27,21 +36,21 @@ header .header-brands > div > p {
 }
 
 /* First logo (Asian Paints) - active state with white background */
-header .header-brands > div > p:first-child {
+header .header-brands>div>p:first-child {
   background-color: #fff;
 }
 
-header .header-brands > div > p:first-child a {
+header .header-brands>div>p:first-child a {
   padding: 14px 32px;
 }
 
 /* Other brand logos - dark blue background */
-header .header-brands > div > p:not(:first-child) a {
+header .header-brands>div>p:not(:first-child) a {
   padding: 14px 24px;
   border-left: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-header .header-brands > div > p a {
+header .header-brands>div>p a {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -49,7 +58,7 @@ header .header-brands > div > p a {
   transition: background-color 0.2s ease;
 }
 
-header .header-brands > div > p:not(:first-child) a:hover {
+header .header-brands>div>p:not(:first-child) a:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -68,9 +77,53 @@ header .header {
   position: sticky;
   top: 0;
   z-index: 100;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-header .header > div {
+header .header>div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1264px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  gap: 24px;
+}
+
+/* Logo */
+header .header>div>p:first-child {
+  margin: 0;
+  flex-shrink: 0;
+}
+
+header .header>div>p:first-child a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+header .header>div>p:first-child img {
+  height: 48px;
+  width: auto;
+}
+
+/* Navigation List */
+header .header-brands img {
+  height: 22px;
+  width: auto;
+}
+
+/* Main Header */
+header .header {
+  background-color: #fff;
+  border-bottom: 1px solid #e5e5e5;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+header .header>div {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -81,18 +134,18 @@ header .header > div {
 }
 
 /* Logo */
-header .header > div > p:first-child {
+header .header>div>p:first-child {
   margin: 0;
   flex-shrink: 0;
 }
 
-header .header > div > p:first-child a {
+header .header>div>p:first-child a {
   display: flex;
   align-items: center;
   text-decoration: none;
 }
 
-header .header > div > p:first-child img {
+header .header>div>p:first-child img {
   height: 48px;
   width: auto;
 }
@@ -108,16 +161,16 @@ header .header ul {
   flex: 1;
 }
 
-header .header > div > ul {
+header .header>div>ul {
   justify-content: flex-start;
   margin-left: 32px;
 }
 
-header .header > div > ul > li {
+header .header>div>ul>li {
   position: relative;
 }
 
-header .header > div > ul > li > a {
+header .header>div>ul>li>a {
   text-decoration: none;
   color: #1a1a1a;
   font-size: 15px;
@@ -129,12 +182,12 @@ header .header > div > ul > li > a {
   transition: color 0.2s ease;
 }
 
-header .header > div > ul > li > a:hover {
+header .header>div>ul>li>a:hover {
   color: #011c5f;
 }
 
 /* Mega Menu Dropdown */
-header .header > div > ul > li > ul {
+header .header>div>ul>li>ul {
   position: absolute;
   top: 100%;
   left: 0;
@@ -150,16 +203,16 @@ header .header > div > ul > li > ul {
   border-top: 3px solid #011c5f;
 }
 
-header .header > div > ul > li:hover > ul {
+header .header>div>ul>li:hover>ul {
   display: flex;
 }
 
-header .header > div > ul > li > ul > li {
+header .header>div>ul>li>ul>li {
   flex: 0 0 auto;
   min-width: 160px;
 }
 
-header .header > div > ul > li > ul > li > strong {
+header .header>div>ul>li>ul>li>strong {
   display: block;
   font-size: 12px;
   font-weight: 700;
@@ -169,13 +222,13 @@ header .header > div > ul > li > ul > li > strong {
   letter-spacing: 0.8px;
 }
 
-header .header > div > ul > li > ul > li ul {
+header .header>div>ul>li>ul>li ul {
   display: flex;
   flex-direction: column;
   gap: 0;
 }
 
-header .header > div > ul > li > ul > li ul li a {
+header .header>div>ul>li>ul>li ul li a {
   text-decoration: none;
   color: #333;
   font-size: 14px;
@@ -185,18 +238,18 @@ header .header > div > ul > li > ul > li ul li a {
   transition: color 0.2s ease;
 }
 
-header .header > div > ul > li > ul > li ul li a:hover {
+header .header>div>ul>li>ul>li ul li a:hover {
   color: #011c5f;
 }
 
 /* ========================================
    HEADER ACTIONS (Icons)
    ======================================== */
-header .header > div > p:not(:first-child):not(:last-child) {
+header .header>div>p:not(:first-child):not(:last-child) {
   margin: 0;
 }
 
-header .header > div > p:not(:first-child):not(:last-child) a {
+header .header>div>p:not(:first-child):not(:last-child) a {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -207,11 +260,11 @@ header .header > div > p:not(:first-child):not(:last-child) a {
   transition: background-color 0.2s ease;
 }
 
-header .header > div > p:not(:first-child):not(:last-child) a:hover {
+header .header>div>p:not(:first-child):not(:last-child) a:hover {
   background-color: #f5f5f5;
 }
 
-header .header > div > p:not(:first-child):not(:last-child) img {
+header .header>div>p:not(:first-child):not(:last-child) img {
   width: 24px;
   height: 24px;
 }
@@ -219,12 +272,12 @@ header .header > div > p:not(:first-child):not(:last-child) img {
 /* ========================================
    CTA BUTTON (Book Free Site Visit)
    ======================================== */
-header .header > div > p:last-child {
+header .header>div>p:last-child {
   margin: 0;
   flex-shrink: 0;
 }
 
-header .header > div > p:last-child a {
+header .header>div>p:last-child a {
   background: linear-gradient(135deg, #ff5c35 0%, #ff7849 100%);
   color: #fff;
   padding: 14px 28px;
@@ -239,14 +292,14 @@ header .header > div > p:last-child a {
   box-shadow: 0 4px 12px rgba(255, 92, 53, 0.3);
 }
 
-header .header > div > p:last-child a:hover {
+header .header>div>p:last-child a:hover {
   background: linear-gradient(135deg, #ff4722 0%, #ff6b3d 100%);
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(255, 92, 53, 0.4);
 }
 
 /* Hide the text "Book Free Site Visit" icon if any */
-header .header > div > p:last-child img {
+header .header>div>p:last-child img {
   display: none;
 }
 
@@ -258,7 +311,7 @@ header .header-secondary-nav {
   border-top: 1px solid #e8e8e8;
 }
 
-header .header-secondary-nav > div {
+header .header-secondary-nav>div {
   max-width: 1264px;
   margin: 0 auto;
   padding: 0 24px;
@@ -358,16 +411,17 @@ header .nav-hamburger-icon::after {
    MOBILE STYLES (< 992px)
    ======================================== */
 @media (max-width: 991px) {
+
   /* Brand bar - simplified on mobile */
-  header .header-brands > div {
+  header .header-brands>div {
     justify-content: flex-start;
   }
 
-  header .header-brands > div > p:first-child a {
+  header .header-brands>div>p:first-child a {
     padding: 12px 20px;
   }
 
-  header .header-brands > div > p:not(:first-child) {
+  header .header-brands>div>p:not(:first-child) {
     display: none;
   }
 
@@ -376,17 +430,17 @@ header .nav-hamburger-icon::after {
   }
 
   /* Main header adjustments */
-  header .header > div {
+  header .header>div {
     padding: 12px 16px;
     gap: 12px;
   }
 
-  header .header > div > p:first-child img {
+  header .header>div>p:first-child img {
     height: 36px;
   }
 
   /* Hide desktop navigation */
-  header .header > div > ul {
+  header .header>div>ul {
     display: none;
   }
 
@@ -397,23 +451,23 @@ header .nav-hamburger-icon::after {
   }
 
   /* Adjust icon sizes */
-  header .header > div > p:not(:first-child):not(:last-child) a {
+  header .header>div>p:not(:first-child):not(:last-child) a {
     padding: 8px;
   }
 
-  header .header > div > p:not(:first-child):not(:last-child) img {
+  header .header>div>p:not(:first-child):not(:last-child) img {
     width: 22px;
     height: 22px;
   }
 
   /* Hide some icons on mobile */
-  header .header > div > p:nth-child(3),
-  header .header > div > p:nth-child(4) {
+  header .header>div>p:nth-child(3),
+  header .header>div>p:nth-child(4) {
     display: none;
   }
 
   /* CTA button - smaller on mobile */
-  header .header > div > p:last-child a {
+  header .header>div>p:last-child a {
     padding: 10px 18px;
     font-size: 12px;
     border-radius: 20px;
@@ -425,7 +479,7 @@ header .nav-hamburger-icon::after {
   }
 
   /* Mobile navigation when expanded */
-  header .header[aria-expanded='true'] > div > ul {
+  header .header[aria-expanded='true']>div>ul {
     display: flex;
     flex-direction: column;
     position: fixed;
@@ -441,18 +495,18 @@ header .nav-hamburger-icon::after {
     z-index: 999;
   }
 
-  header .header > div > ul > li {
+  header .header>div>ul>li {
     width: 100%;
     border-bottom: 1px solid #e8e8e8;
   }
 
-  header .header > div > ul > li > a {
+  header .header>div>ul>li>a {
     padding: 18px 20px;
     font-size: 16px;
     justify-content: space-between;
   }
 
-  header .header > div > ul > li > ul {
+  header .header>div>ul>li>ul {
     position: static;
     box-shadow: none;
     padding: 0 20px 20px;
@@ -463,21 +517,21 @@ header .nav-hamburger-icon::after {
     border-top: none;
   }
 
-  header .header > div > ul > li.active > ul {
+  header .header>div>ul>li.active>ul {
     display: flex;
   }
 
-  header .header > div > ul > li > ul > li {
+  header .header>div>ul>li>ul>li {
     width: 100%;
     min-width: 0;
   }
 
-  header .header > div > ul > li > ul > li > strong {
+  header .header>div>ul>li>ul>li>strong {
     font-size: 11px;
     margin-bottom: 12px;
   }
 
-  header .header > div > ul > li > ul > li ul li a {
+  header .header>div>ul>li>ul>li ul li a {
     font-size: 14px;
     padding: 10px 0;
   }
@@ -487,11 +541,11 @@ header .nav-hamburger-icon::after {
    TABLET STYLES (768px - 991px)
    ======================================== */
 @media (min-width: 768px) and (max-width: 991px) {
-  header .header > div {
+  header .header>div {
     gap: 16px;
   }
 
-  header .header > div > p:first-child img {
+  header .header>div>p:first-child img {
     height: 40px;
   }
 }
@@ -500,7 +554,7 @@ header .nav-hamburger-icon::after {
    DESKTOP STYLES (>= 992px)
    ======================================== */
 @media (min-width: 992px) {
-  header .header > div > ul {
+  header .header>div>ul {
     display: flex;
   }
 
@@ -544,8 +598,9 @@ header button:focus-visible {
    PRINT STYLES
    ======================================== */
 @media print {
+
   header .header-brands,
-  header .header > div > p:not(:first-child),
+  header .header>div>p:not(:first-child),
   header .header-secondary-nav {
     display: none;
   }
