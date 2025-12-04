@@ -271,6 +271,11 @@ main .section.highlight {
   padding: 40px 0;
 }
 
+/* Hide page metadata block */
+.metadata {
+  display: none;
+}
+
 main .section.dark {
   background-color: var(--dark-color);
   color: white;
