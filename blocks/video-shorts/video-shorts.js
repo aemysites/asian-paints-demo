@@ -15,10 +15,24 @@ export default function decorate(block) {
       const mediaCol = cols[0];
       const ctaCol = cols[1];
       
-      // Get video/image source
-      const img = mediaCol.querySelector('img');
-      const videoSrc = img?.src || '';
-      const alt = img?.alt || '';
+      // Get video source - check for anchor link to video file first
+      let videoSrc = '';
+      const videoLink = mediaCol.querySelector('a');
+      if (videoLink && videoLink.href.includes('.mp4')) {
+        videoSrc = videoLink.href;
+      } else {
+        // Fallback: check for img src
+        const img = mediaCol.querySelector('img');
+        if (img) {
+          videoSrc = img.src;
+        } else {
+          // Fallback: get URL from text content
+          const textContent = mediaCol.textContent?.trim() || '';
+          if (textContent.includes('.mp4') || textContent.includes('http')) {
+            videoSrc = textContent;
+          }
+        }
+      }
       
       // Get CTA
       const ctaLink = ctaCol.querySelector('a');
@@ -28,7 +42,7 @@ export default function decorate(block) {
       if (videoSrc) {
         videoData.push({
           src: videoSrc,
-          alt,
+          alt: ctaText,
           ctaText,
           ctaHref
         });
