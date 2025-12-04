@@ -3,16 +3,6 @@ export default function decorate(block) {
   const section = block.closest('.section');
   if (section) {
     section.classList.remove('dark-blue');
-    section.style.margin = '0';
-    section.style.padding = '0';
-
-    // Remove constraints from section's wrapper div
-    const sectionWrapper = section.querySelector(':scope > .interiors-shop-wrapper');
-    if (sectionWrapper) {
-      sectionWrapper.style.maxWidth = 'none';
-      sectionWrapper.style.padding = '0';
-      sectionWrapper.style.margin = '0';
-    }
   }
 
   // Get heading and description
