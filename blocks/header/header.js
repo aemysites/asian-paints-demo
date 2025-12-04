@@ -2,7 +2,24 @@
  * Asian Paints Header - Complete Navigation System
  * @param {Element} block The header block element
  */
-export default function decorate(block) {
+export default async function decorate(block) {
+  // Fetch nav content
+  const resp = await fetch('/nav.plain.html');
+  if (resp.ok) {
+    const html = await resp.text();
+    // Parse the HTML and get the content from main > div sections
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const sections = doc.querySelectorAll('main > div');
+
+    // Add the sections to the block
+    sections.forEach(section => {
+      block.appendChild(section.cloneNode(true));
+    });
+  } else {
+    console.error('Failed to load nav.plain.html:', resp.status);
+  }
+
   // Mobile hamburger menu functionality
   const burgerMenu = block.querySelector('.burger');
   const mobileMenu = block.querySelector('.menu');
