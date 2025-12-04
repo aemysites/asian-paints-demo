@@ -7,10 +7,10 @@ export default async function decorate(block) {
   const resp = await fetch('/nav.plain.html');
   if (resp.ok) {
     const html = await resp.text();
-    // Parse the HTML and get the content from main > div sections
+    // Parse the HTML and get the content from body > div sections
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
-    const sections = doc.querySelectorAll('main > div');
+    const sections = doc.querySelectorAll('body > div');
 
     // Add the sections to the block
     sections.forEach(section => {
