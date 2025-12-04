@@ -1,95 +1,97 @@
 export default function decorate(block) {
+  // Add wrapper class to parent section for styling the title
+  const section = block.closest('.section');
+  if (section) {
+    section.classList.add('explore-split-wrapper');
+  }
+
   const row = block.querySelector(':scope > div');
   if (!row) return;
 
   const columns = [...row.children];
   if (columns.length < 2) return;
 
-  // First column is Textures
+  // First column is Textures (three-column layout)
   const texturesCol = columns[0];
-  texturesCol.classList.add('explore-split-section');
+  texturesCol.classList.add('explore-split-section', 'three-column');
 
-  // Get heading and images from textures column
   const texturesHeading = texturesCol.querySelector('h3');
   const texturesImages = [...texturesCol.querySelectorAll('img')];
 
   if (texturesHeading && texturesImages.length > 0) {
-    // Create header with title and "View all" button
-    const header = document.createElement('div');
-    header.className = 'explore-split-header';
+    // Create text section with title and button
+    const textSection = document.createElement('div');
+    textSection.className = 'explore-split-text-section';
 
     const title = document.createElement('h3');
     title.textContent = texturesHeading.textContent;
 
     const viewAllBtn = document.createElement('a');
-    viewAllBtn.href = '#';
+    viewAllBtn.href = 'https://www.asianpaints.com/products/paints-and-textures/interior-walls/royale-play.html';
     viewAllBtn.className = 'explore-split-view-all';
-    viewAllBtn.textContent = 'View all';
     viewAllBtn.innerHTML = 'View all <span>→</span>';
 
-    header.appendChild(title);
-    header.appendChild(viewAllBtn);
+    textSection.appendChild(title);
+    textSection.appendChild(viewAllBtn);
 
-    // Create grid for images
+    // Create grid for images with mixed heights
     const grid = document.createElement('div');
-    grid.className = 'explore-split-grid';
+    grid.className = 'explore-split-grid mixed-height';
 
-    texturesImages.forEach((img) => {
+    texturesImages.forEach((img, index) => {
       const card = document.createElement('div');
-      card.className = 'explore-split-card';
+      card.className = `explore-split-card item-${index + 1}`;
       card.appendChild(img.cloneNode(true));
       grid.appendChild(card);
     });
 
-    // Clear and rebuild textures column
+    // Clear and rebuild
     texturesCol.innerHTML = '';
-    texturesCol.appendChild(header);
+    texturesCol.appendChild(textSection);
     texturesCol.appendChild(grid);
   }
 
-  // Second column is Wallpapers
+  // Second column is Wallpapers (two-column layout)
   const wallpapersCol = columns[1];
-  wallpapersCol.classList.add('explore-split-section');
+  wallpapersCol.classList.add('explore-split-section', 'two-column');
 
-  // Get heading and images from wallpapers column
   const wallpapersHeading = wallpapersCol.querySelector('h3');
   const wallpapersImages = [...wallpapersCol.querySelectorAll('img')];
 
   if (wallpapersHeading && wallpapersImages.length > 0) {
-    // Create header with title and "View all" button
-    const header = document.createElement('div');
-    header.className = 'explore-split-header';
+    // Create text section with title and button
+    const textSection = document.createElement('div');
+    textSection.className = 'explore-split-text-section';
 
     const title = document.createElement('h3');
     title.textContent = wallpapersHeading.textContent;
 
     const viewAllBtn = document.createElement('a');
-    viewAllBtn.href = '#';
+    viewAllBtn.href = 'https://www.asianpaints.com/products/wall-coverings.html';
     viewAllBtn.className = 'explore-split-view-all';
-    viewAllBtn.textContent = 'View all';
     viewAllBtn.innerHTML = 'View all <span>→</span>';
 
-    header.appendChild(title);
-    header.appendChild(viewAllBtn);
+    textSection.appendChild(title);
+    textSection.appendChild(viewAllBtn);
 
     // Create grid for images
     const grid = document.createElement('div');
-    grid.className = 'explore-split-grid';
+    grid.className = 'explore-split-grid mixed-height';
 
-    wallpapersImages.forEach((img) => {
+    wallpapersImages.forEach((img, index) => {
       const card = document.createElement('div');
-      card.className = 'explore-split-card';
+      card.className = `explore-split-card item-${index + 1}`;
       card.appendChild(img.cloneNode(true));
       grid.appendChild(card);
     });
 
-    // Clear and rebuild wallpapers column
+    // Clear and rebuild
     wallpapersCol.innerHTML = '';
-    wallpapersCol.appendChild(header);
+    wallpapersCol.appendChild(textSection);
     wallpapersCol.appendChild(grid);
   }
 
-  // Move columns to be direct children of block (unwrap from row)
+  // Move columns to be direct children of block
   block.append(texturesCol, wallpapersCol);
   row.remove();
 }
