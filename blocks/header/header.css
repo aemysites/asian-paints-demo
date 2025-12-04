@@ -27,20 +27,21 @@
 }
 
 /* First logo (Asian Paints) - active with white background */
-.header .header-brands p:first-child {
+.header .header-brands > div > p:first-child {
   background-color: #fff;
 }
 
-.header .header-brands p:first-child a {
-  padding: 12px 28px;
+.header .header-brands > div > p:first-child a {
+  padding: 14px 32px;
   display: flex;
   align-items: center;
   justify-content: center;
+  border: none;
 }
 
 /* Other brand logos */
-.header .header-brands p:not(:first-child) a {
-  padding: 12px 28px;
+.header .header-brands > div > p:not(:first-child) a {
+  padding: 14px 32px;
   border-left: 1px solid rgba(255, 255, 255, 0.2);
   display: flex;
   align-items: center;
@@ -52,7 +53,7 @@
   transition: background-color 0.2s ease;
 }
 
-.header .header-brands p:not(:first-child) a:hover {
+.header .header-brands > div > p:not(:first-child) a:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -76,14 +77,14 @@
 }
 
 /* Ensure images in brand bar are visible - filter for dark background */
-.header .header-brands p:not(:first-child) img,
-.header .header-brands p:not(:first-child) picture img {
+.header .header-brands > div > p:not(:first-child) img,
+.header .header-brands > div > p:not(:first-child) picture img {
   filter: brightness(0) invert(1) !important;
 }
 
 /* First brand (white bg) should show normally */
-.header .header-brands p:first-child img,
-.header .header-brands p:first-child picture img {
+.header .header-brands > div > p:first-child img,
+.header .header-brands > div > p:first-child picture img {
   filter: none !important;
 }
 
@@ -115,6 +116,9 @@
   display: flex;
   align-items: center;
   text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
 }
 
 .header .header-logo img,
@@ -414,11 +418,11 @@
     justify-content: flex-start;
   }
 
-  .header .header-brands p:first-child a {
+  .header .header-brands > div > p:first-child a {
     padding: 10px 16px;
   }
 
-  .header .header-brands p:not(:first-child) {
+  .header .header-brands > div > p:not(:first-child) {
     display: none;
   }
 
