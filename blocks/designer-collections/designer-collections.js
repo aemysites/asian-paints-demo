@@ -1,12 +1,52 @@
 export default function decorate(block) {
-  const heading = block.querySelector('h2');
-  if (heading) {
-    heading.classList.add('designer-collections-title');
+  const section = block.closest('.section');
+
+  // Look for heading inside block first, then in preceding sibling
+  let heading = block.querySelector('h2');
+  if (!heading && section) {
+    // Check for heading in default content before the block
+    const defaultContent = section.querySelector('.default-content-wrapper h2');
+    if (defaultContent) {
+      heading = defaultContent;
+    }
   }
 
   // Get all rows
   const rows = [...block.querySelectorAll(':scope > div')];
   if (rows.length === 0) return;
+
+  // Create header with title and nav
+  const header = document.createElement('div');
+  header.className = 'designer-collections-header';
+
+  if (heading) {
+    const titleEl = document.createElement('h2');
+    titleEl.className = 'designer-collections-title';
+    titleEl.textContent = heading.textContent;
+    header.appendChild(titleEl);
+    // Hide original heading if it's outside the block
+    if (!block.contains(heading)) {
+      heading.style.display = 'none';
+    }
+  }
+
+  // Create navigation wrapper
+  const navWrapper = document.createElement('div');
+  navWrapper.className = 'designer-collections-nav-wrapper';
+
+  const prevButton = document.createElement('button');
+  prevButton.className = 'designer-collections-nav designer-collections-prev';
+  prevButton.setAttribute('aria-label', 'Previous');
+  prevButton.innerHTML = '←';
+
+  const nextButton = document.createElement('button');
+  nextButton.className = 'designer-collections-nav designer-collections-next';
+  nextButton.setAttribute('aria-label', 'Next');
+  nextButton.innerHTML = '→';
+
+  navWrapper.appendChild(prevButton);
+  navWrapper.appendChild(nextButton);
+  header.appendChild(navWrapper);
 
   // Create carousel structure
   const carouselContainer = document.createElement('div');
@@ -29,7 +69,34 @@ export default function decorate(block) {
 
     // Extract logo, video link, title, and description from cell content
     const logo = cell.querySelector('img');
-    const videoLink = cell.querySelector('a[href$=".webm"]');
+    // Look for video links - mp4 or webm
+    let videoSrc = '';
+    let videoLink = cell.querySelector('a[href$=".mp4"]');
+    if (!videoLink) {
+      videoLink = cell.querySelector('a[href$=".webm"]');
+    }
+    // Also check for any anchor that contains .mp4 in href or text
+    if (!videoLink) {
+      const allLinks = cell.querySelectorAll('a');
+      allLinks.forEach((link) => {
+        if (link.href.includes('.mp4') || link.href.includes('.webm')) {
+          videoLink = link;
+        }
+      });
+    }
+    // Get video source from link or try plain text
+    if (videoLink) {
+      videoSrc = videoLink.href;
+    } else {
+      // Check for plain text URL in paragraphs
+      const paragraphs = cell.querySelectorAll('p');
+      paragraphs.forEach((p) => {
+        const text = p.textContent.trim();
+        if (text.includes('.mp4') || text.includes('.webm')) {
+          videoSrc = text;
+        }
+      });
+    }
     const title = cell.querySelector('strong');
     const description = cell.querySelector('em');
 
@@ -45,13 +112,13 @@ export default function decorate(block) {
     const mediaDiv = document.createElement('div');
     mediaDiv.className = 'designer-collections-image';
 
-    if (videoLink) {
+    if (videoSrc) {
       const video = document.createElement('video');
       video.setAttribute('playsinline', '');
       video.setAttribute('muted', '');
       video.setAttribute('loop', '');
       video.setAttribute('autoplay', '');
-      video.src = videoLink.href;
+      video.src = videoSrc;
       video.className = 'designer-collections-video';
       mediaDiv.appendChild(video);
     }
@@ -79,25 +146,9 @@ export default function decorate(block) {
 
   carouselContainer.appendChild(carouselTrack);
 
-  // Add navigation buttons
-  const prevButton = document.createElement('button');
-  prevButton.className = 'designer-collections-nav designer-collections-prev';
-  prevButton.setAttribute('aria-label', 'Previous');
-  prevButton.innerHTML = '←';
-
-  const nextButton = document.createElement('button');
-  nextButton.className = 'designer-collections-nav designer-collections-next';
-  nextButton.setAttribute('aria-label', 'Next');
-  nextButton.innerHTML = '→';
-
-  carouselContainer.appendChild(prevButton);
-  carouselContainer.appendChild(nextButton);
-
-  // Clear block content and add carousel
+  // Clear block content and add header + carousel
   block.innerHTML = '';
-  if (heading) {
-    block.appendChild(heading);
-  }
+  block.appendChild(header);
   block.appendChild(carouselContainer);
 
   // Carousel logic
@@ -106,21 +157,28 @@ export default function decorate(block) {
   const totalSlides = cards.length;
 
   function getCardsPerView() {
-    return window.innerWidth < 900 ? 1 : 3;
+    if (window.innerWidth >= 1200) return 4;
+    if (window.innerWidth >= 900) return 3;
+    if (window.innerWidth >= 600) return 2;
+    return 1;
   }
 
   function showSlide(index) {
     const cardsPerView = getCardsPerView();
-    cards.forEach(card => card.classList.remove('active'));
+    cards.forEach((card) => card.classList.remove('active'));
 
     const offset = Math.min(index, Math.max(0, totalSlides - cardsPerView));
     const cardWidth = cards[0].offsetWidth;
-    const gap = 20;
+    const gap = 24;
     carouselTrack.style.transform = `translateX(-${offset * (cardWidth + gap)}px)`;
 
-    for (let i = 0; i < cardsPerView && (offset + i) < totalSlides; i++) {
+    for (let i = 0; i < cardsPerView && (offset + i) < totalSlides; i += 1) {
       cards[offset + i].classList.add('active');
     }
+
+    // Update button states
+    prevButton.disabled = offset === 0;
+    nextButton.disabled = offset >= totalSlides - cardsPerView;
   }
 
   prevButton.addEventListener('click', () => {

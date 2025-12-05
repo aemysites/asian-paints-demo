@@ -23,6 +23,12 @@ export default function decorate(block) {
     const details = document.createElement('details');
     moveInstrumentation(row, details);
     details.className = 'accordion-faq-item';
+
+    // Open the first item by default
+    if (index === 0) {
+      details.open = true;
+    }
+
     details.append(summary, body);
 
     // Hide items beyond the initial visible count

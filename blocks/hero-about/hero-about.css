@@ -1,0 +1,123 @@
+.hero-about-container .hero-about-wrapper {
+  max-width: unset;
+  padding: 0;
+}
+
+.hero-about {
+  position: relative;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 60px 24px;
+}
+
+@media (min-width: 600px) {
+  .hero-about {
+    min-height: 450px;
+  }
+}
+
+@media (min-width: 900px) {
+  .hero-about {
+    min-height: 500px;
+    padding: 80px 32px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .hero-about {
+    min-height: 550px;
+  }
+}
+
+/* Background image */
+.hero-about picture {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  object-fit: cover;
+  box-sizing: border-box;
+}
+
+.hero-about img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+/* Text container */
+.hero-about > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* Subtext - "ABOUT ASIAN PAINTS" */
+.hero-about h5,
+.hero-about h6,
+.hero-about p:first-of-type:not(:last-of-type) {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #fff;
+  margin: 0 0 12px 0;
+  opacity: 0.9;
+}
+
+/* Main title */
+.hero-about h1 {
+  font-family: var(--heading-font-family);
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: #fff;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+@media (min-width: 600px) {
+  .hero-about h1 {
+    font-size: 40px;
+  }
+}
+
+@media (min-width: 900px) {
+  .hero-about h1 {
+    font-size: 48px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .hero-about h1 {
+    font-size: 56px;
+  }
+}
+
+/* Remove bold from strong if present */
+.hero-about h1 strong {
+  font-weight: 400;
+}
+
+/* All text white */
+.hero-about h1,
+.hero-about h2,
+.hero-about h3,
+.hero-about h4,
+.hero-about h5,
+.hero-about h6,
+.hero-about p {
+  color: #fff;
+}
+
+/* No image variant */
+.hero-about.no-image * {
+  color: var(--text-color);
+}

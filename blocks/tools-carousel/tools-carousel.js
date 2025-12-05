@@ -1,4 +1,10 @@
 export default function decorate(block) {
+  // Add wrapper class to parent section
+  const section = block.closest('.section');
+  if (section) {
+    section.classList.add('tools-carousel-wrapper');
+  }
+
   const row = block.querySelector(':scope > div');
   if (!row) return;
 
@@ -18,7 +24,7 @@ export default function decorate(block) {
     const images = [...carouselCol.querySelectorAll('img')];
     const headings = [...carouselCol.querySelectorAll('h3')];
 
-    if (images.length > 0) {
+    if (images.length > 0 || headings.length > 0) {
       // Create carousel structure
       const carouselContainer = document.createElement('div');
       carouselContainer.className = 'tools-carousel-container';
@@ -27,69 +33,100 @@ export default function decorate(block) {
       carouselTrack.className = 'tools-carousel-track';
 
       // Create slides from images and headings
-      images.forEach((img, index) => {
+      const items = Math.max(images.length, headings.length);
+      for (let i = 0; i < items; i++) {
         const slide = document.createElement('div');
         slide.className = 'tools-carousel-slide';
-        if (index === 0) slide.classList.add('active');
+        if (i === 0) slide.classList.add('active');
 
-        const heading = headings[index];
+        const heading = headings[i];
+        const img = images[i];
 
+        // Add image (will be hidden by CSS)
+        if (img) {
+          slide.appendChild(img.cloneNode(true));
+        }
+
+        // Add title
         if (heading) {
           const title = document.createElement('div');
           title.className = 'tools-carousel-title';
           title.textContent = heading.textContent;
-
-          slide.appendChild(img.cloneNode(true));
           slide.appendChild(title);
-          carouselTrack.appendChild(slide);
         }
-      });
+
+        carouselTrack.appendChild(slide);
+      }
 
       carouselContainer.appendChild(carouselTrack);
 
-      // Add navigation buttons
+      // Create navigation container (top right)
+      const navContainer = document.createElement('div');
+      navContainer.className = 'tools-carousel-nav-container';
+
       const prevButton = document.createElement('button');
       prevButton.className = 'tools-carousel-nav tools-carousel-prev';
       prevButton.setAttribute('aria-label', 'Previous');
-      prevButton.innerHTML = '‹';
+      prevButton.innerHTML = '←';
 
       const nextButton = document.createElement('button');
       nextButton.className = 'tools-carousel-nav tools-carousel-next';
       nextButton.setAttribute('aria-label', 'Next');
-      nextButton.innerHTML = '›';
+      nextButton.innerHTML = '→';
 
-      carouselContainer.appendChild(prevButton);
-      carouselContainer.appendChild(nextButton);
+      navContainer.appendChild(prevButton);
+      navContainer.appendChild(nextButton);
 
       // Clear carousel column and add container
       carouselCol.innerHTML = '';
       carouselCol.appendChild(carouselContainer);
 
-      // Carousel logic
-      let currentSlide = 0;
-      const slides = carouselTrack.querySelectorAll('.tools-carousel-slide');
-      const totalSlides = slides.length;
-      const slidesPerView = 3;
-
-      function showSlide(index) {
-        slides.forEach(slide => slide.classList.remove('active'));
-        const offset = Math.min(index, totalSlides - slidesPerView);
-        carouselTrack.style.transform = `translateX(-${offset * (100 / slidesPerView)}%)`;
-
-        for (let i = 0; i < slidesPerView && (offset + i) < totalSlides; i++) {
-          slides[offset + i].classList.add('active');
-        }
+      // Add nav container to the section wrapper (for absolute positioning at page right)
+      if (section) {
+        section.appendChild(navContainer);
+      } else {
+        block.appendChild(navContainer);
       }
 
-      prevButton.addEventListener('click', () => {
-        currentSlide = Math.max(0, currentSlide - 1);
-        showSlide(currentSlide);
+      // Carousel logic
+      let currentIndex = 0;
+      const slides = carouselTrack.querySelectorAll('.tools-carousel-slide');
+      const totalSlides = slides.length;
+      const slideWidth = 280; // card width
+      const gap = 16; // gap between cards
+
+      function getMaxIndex() {
+        const containerWidth = carouselContainer.offsetWidth;
+        const visibleSlides = Math.floor(containerWidth / (slideWidth + gap));
+        return Math.max(0, totalSlides - visibleSlides);
+      }
+
+      function showSlide(index) {
+        const maxIndex = getMaxIndex();
+        currentIndex = Math.max(0, Math.min(index, maxIndex));
+        const offset = currentIndex * (slideWidth + gap);
+        carouselTrack.style.transform = `translateX(-${offset}px)`;
+      }
+
+      prevButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        showSlide(currentIndex - 1);
       });
 
-      nextButton.addEventListener('click', () => {
-        currentSlide = Math.min(totalSlides - slidesPerView, currentSlide + 1);
-        showSlide(currentSlide);
+      nextButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        showSlide(currentIndex + 1);
       });
+
+      // Handle resize
+      window.addEventListener('resize', () => {
+        showSlide(currentIndex);
+      });
+
+      // Initialize
+      showSlide(0);
     }
   }
 
