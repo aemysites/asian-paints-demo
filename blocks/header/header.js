@@ -384,29 +384,6 @@ export default async function decorate(block) {
     }
   });
 
-  // Handle sticky header scroll behavior using CSS classes to prevent CLS
-  const brandsBar = block.querySelector('.header-brands');
-
-  const handleScroll = () => {
-    if (!brandsBar) return;
-
-    const brandsHeight = brandsBar.offsetHeight;
-    const scrollY = window.scrollY || window.pageYOffset;
-
-    // Use CSS class toggle instead of dynamic styles to prevent CLS
-    if (scrollY >= brandsHeight) {
-      block.classList.add('scrolled');
-    } else {
-      block.classList.remove('scrolled');
-    }
-  };
-
-  // Initial check
-  handleScroll();
-
-  // Update on scroll with passive listener for better performance
-  window.addEventListener('scroll', handleScroll, { passive: true });
-
   // Resize handler
   window.addEventListener('resize', () => {
     if (window.innerWidth >= 992) {

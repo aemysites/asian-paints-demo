@@ -43,8 +43,8 @@
   --heading-font-size-s: 24px;
   --heading-font-size-xs: 22px;
 
-  /* nav height - accounts for full header (brand bar + main nav + secondary nav) */
-  --nav-height: 160px;
+  /* Header height - mobile first: 38px brand bar + 56px main header = 94px */
+  --nav-height: 94px;
   --header-height: var(--nav-height);
 }
 
@@ -78,6 +78,13 @@
   }
 }
 
+@media (width >= 992px) {
+  :root {
+    /* Desktop header: 48px brand bar + 56px main header + 48px nav bar = 152px */
+    --nav-height: 152px;
+  }
+}
+
 body {
   display: none;
   margin: 0;
@@ -93,15 +100,15 @@ body.appear {
 }
 
 header {
-  height: auto;
-  /* Reserve space for header to prevent CLS - 48px brand bar + 56px main header + 48px nav bar */
-  min-height: 152px;
+  /* Fixed header height - must match header block CSS exactly */
+  /* 48px brand bar + 56px main header + 48px nav bar = 152px */
+  height: 152px;
 }
 
 @media (width < 992px) {
   header {
-    /* Mobile: 38px brand bar + 56px main header (nav bar hidden) */
-    min-height: 94px;
+    /* Mobile: 38px brand bar + 56px main header = 94px (nav bar hidden) */
+    height: 94px;
   }
 }
 

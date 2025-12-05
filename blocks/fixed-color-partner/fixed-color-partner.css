@@ -55,9 +55,9 @@
 
 .fixed-color-partner .animate-image img {
   display: block;
-  width: 100%;
-  height: auto;
-  max-width: 367px;
+  width: 367px;
+  height: 385px;
+  max-width: 100%;
 }
 
 /* Fixed Image (Collapsed Badge) */
@@ -78,10 +78,8 @@
 
 .fixed-color-partner .fixed-img img {
   display: block;
-  width: auto;
-  height: auto;
-  max-width: 90px;
-  max-height: 34px;
+  width: 90px;
+  height: 34px;
 }
 
 /* Close Button - appears when expanded */
@@ -117,19 +115,21 @@
 /* Mobile Styles */
 @media (max-width: 767px) {
   .fixed-color-partner .animate-image img {
-    max-width: 280px;
+    width: 280px;
+    height: 294px; /* Maintain aspect ratio: 280/367 * 385 */
   }
 
   .fixed-color-partner .fixed-img img {
-    max-width: 70px;
-    max-height: 28px;
+    width: 70px;
+    height: 26px; /* Maintain aspect ratio: 70/90 * 34 */
   }
 }
 
 /* Tablet Styles */
 @media (min-width: 768px) and (max-width: 991px) {
   .fixed-color-partner .animate-image img {
-    max-width: 320px;
+    width: 320px;
+    height: 336px; /* Maintain aspect ratio: 320/367 * 385 */
   }
 }
 
