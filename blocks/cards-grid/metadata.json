@@ -34,8 +34,8 @@
     ]
   },
   "usage": {
-    "pagesUsing": ["/content/index"],
-    "reuseCount": 1,
-    "lastUsed": "2025-12-02T07:45:50.501Z"
+    "pagesUsing": ["/content/index", "/content/about-us"],
+    "reuseCount": 2,
+    "lastUsed": "2025-12-05T06:18:40.948Z"
   }
 }

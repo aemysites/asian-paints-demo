@@ -1,0 +1,40 @@
+{
+  "variantName": "hero-about",
+  "baseBlock": "hero",
+  "version": "1.0.0",
+  "created": "2025-12-05T06:24:51.986Z",
+  "sourceContext": {
+    "originUrl": "https://www.asianpaints.com/about-us.html",
+    "originPage": "Asian Paints About Us page",
+    "blockPosition": "top"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "minimal",
+    "purpose": "hero-banner",
+    "imagePattern": "large"
+  },
+  "contentPattern": {
+    "structure": "heading over full-width background image",
+    "buttonCount": 0,
+    "imageCount": 1
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "about pages",
+      "landing pages with full-width hero images",
+      "banner sections with heading overlays",
+      "introductory hero sections"
+    ],
+    "notSuitableFor": [
+      "carousel heroes",
+      "heroes with multiple CTAs",
+      "text-heavy heroes without images"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/content/about-us"],
+    "reuseCount": 1,
+    "lastUsed": "2025-12-05T06:24:51.986Z"
+  }
+}

@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-unresolved
-import { toClassName } from '../../scripts/aem.js';
+import { toClassName, decorateBlocks } from '../../scripts/aem.js';
 import { moveInstrumentation } from '../../scripts/scripts.js';
 
 export default async function decorate(block) {
@@ -49,4 +49,61 @@ export default async function decorate(block) {
   });
 
   block.prepend(tablist);
+
+  // Decorate any nested blocks within tab panels
+  decorateBlocks(block);
+
+  // Add accordion functionality to ALL h2 headings within tab panels
+  const tabPanels = block.querySelectorAll('.tabs-panel');
+  const tabButtons = block.querySelectorAll('.tabs-tab');
+  
+  tabPanels.forEach((panel, index) => {
+    // Add panel title (same as tab button text)
+    const panelTitle = document.createElement('h3');
+    panelTitle.className = 'panel-title';
+    panelTitle.textContent = tabButtons[index]?.textContent?.trim() || '';
+    panel.prepend(panelTitle);
+    
+    const headings = [...panel.querySelectorAll('h2')];
+    
+    // All h2s become accordions (no panel title)
+    headings.forEach((heading) => {
+      // Wrap content between this heading and next heading (or end) in a div
+      const contentWrapper = document.createElement('div');
+      contentWrapper.className = 'accordion-content';
+
+      let nextElement = heading.nextElementSibling;
+      const contentElements = [];
+
+      while (nextElement && nextElement.tagName !== 'H2') {
+        contentElements.push(nextElement);
+        nextElement = nextElement.nextElementSibling;
+      }
+
+      contentElements.forEach(el => contentWrapper.appendChild(el));
+      heading.after(contentWrapper);
+
+      // Add click handler to toggle accordion
+      heading.addEventListener('click', () => {
+        const isActive = heading.classList.contains('active');
+
+        // Close all accordions in this panel
+        headings.forEach(h => h.classList.remove('active'));
+        panel.querySelectorAll('.accordion-content').forEach(c => c.classList.remove('active'));
+
+        // Open clicked accordion if it wasn't active
+        if (!isActive) {
+          heading.classList.add('active');
+          contentWrapper.classList.add('active');
+        }
+      });
+    });
+
+    // Open first accordion item by default
+    const firstAccordion = headings[0];
+    if (firstAccordion) {
+      firstAccordion.classList.add('active');
+      firstAccordion.nextElementSibling?.classList.add('active');
+    }
+  });
 }

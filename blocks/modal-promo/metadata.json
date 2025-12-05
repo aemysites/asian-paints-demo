@@ -1,0 +1,40 @@
+{
+  "variantName": "modal-promo",
+  "baseBlock": "modal",
+  "version": "1.0.0",
+  "created": "2025-12-05T06:24:51.986Z",
+  "sourceContext": {
+    "originUrl": "https://www.asianpaints.com/about-us.html",
+    "originPage": "Asian Paints About Us page",
+    "blockPosition": "overlay"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "dark",
+    "density": "compact",
+    "purpose": "promotional-popup",
+    "imagePattern": "large"
+  },
+  "contentPattern": {
+    "structure": "popup dialog with promotional cards",
+    "buttonCount": "varies",
+    "imageCount": "multiple"
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "promotional popups",
+      "marketing overlays",
+      "announcement modals",
+      "special offers"
+    ],
+    "notSuitableFor": [
+      "form dialogs",
+      "error messages",
+      "confirmation dialogs"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/content/about-us"],
+    "reuseCount": 1,
+    "lastUsed": "2025-12-05T06:24:51.986Z"
+  }
+}
