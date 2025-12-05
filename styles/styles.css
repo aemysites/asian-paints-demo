@@ -105,6 +105,9 @@ header {
   z-index: 1000;
   /* 48px brand bar + 56px main header + 48px nav bar = 152px */
   height: 152px;
+  /* Prevent header layout changes from affecting main content */
+  contain: strict;
+  overflow: hidden;
 }
 
 @media (width < 992px) {
@@ -114,7 +117,13 @@ header {
   }
 }
 
-header .header,
+header .header {
+  visibility: hidden;
+  /* Fixed height to prevent CLS during block decoration */
+  height: 100%;
+  min-height: inherit;
+}
+
 footer .footer {
   visibility: hidden;
 }
