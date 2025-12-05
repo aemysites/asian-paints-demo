@@ -779,17 +779,45 @@ header {
 .header .header-brands {
   position: relative;
   z-index: 1001;
+  /* Fixed height to prevent CLS */
+  height: 48px;
 }
 
 /* Fixed wrapper for main header and nav bar - always visible at top */
 .header .header-sticky {
   position: fixed;
+  top: 48px; /* Start below brand bar */
   left: 0;
   right: 0;
   z-index: 1000;
   background: var(--header-white);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-  transition: top 0.1s ease-out;
+  transition: top 0.15s ease-out;
+}
+
+/* When scrolled past brand bar, stick to top */
+.header.scrolled .header-sticky {
+  top: 0;
+}
+
+/* Reserve space for the fixed sticky header - main header + nav bar */
+.header .header-brands {
+  margin-bottom: 104px; /* 56px main header + 48px nav bar */
+}
+
+@media (width < 992px) {
+  .header .header-brands {
+    height: 38px;
+    margin-bottom: 56px; /* Only main header on mobile, nav bar hidden */
+  }
+
+  .header .header-sticky {
+    top: 38px;
+  }
+
+  .header.scrolled .header-sticky {
+    top: 0;
+  }
 }
 
 /* ========================================

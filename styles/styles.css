@@ -94,6 +94,15 @@ body.appear {
 
 header {
   height: auto;
+  /* Reserve space for header to prevent CLS - 48px brand bar + 56px main header + 48px nav bar */
+  min-height: 152px;
+}
+
+@media (width < 992px) {
+  header {
+    /* Mobile: 38px brand bar + 56px main header (nav bar hidden) */
+    min-height: 94px;
+  }
 }
 
 header .header,
@@ -104,6 +113,11 @@ footer .footer {
 header .header[data-block-status="loaded"],
 footer .footer[data-block-status="loaded"] {
   visibility: visible;
+}
+
+/* Reserve minimum footer space to reduce CLS */
+footer {
+  min-height: 200px;
 }
 
 h1,

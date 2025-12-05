@@ -384,33 +384,28 @@ export default async function decorate(block) {
     }
   });
 
-  // Position sticky header below brands bar, adjust on scroll
-  const stickyHeader = block.querySelector('.header-sticky');
+  // Handle sticky header scroll behavior using CSS classes to prevent CLS
   const brandsBar = block.querySelector('.header-brands');
 
-  const updateStickyPosition = () => {
-    if (!stickyHeader || !brandsBar) return;
+  const handleScroll = () => {
+    if (!brandsBar) return;
 
     const brandsHeight = brandsBar.offsetHeight;
     const scrollY = window.scrollY || window.pageYOffset;
 
-    // Calculate top position: starts at brandsHeight, decreases to 0 as you scroll
-    const topPosition = Math.max(0, brandsHeight - scrollY);
-    stickyHeader.style.top = `${topPosition}px`;
-
-    // Add margin to brands bar to make space for content below fixed header
-    const stickyHeight = stickyHeader.offsetHeight;
-    brandsBar.style.marginBottom = `${stickyHeight}px`;
+    // Use CSS class toggle instead of dynamic styles to prevent CLS
+    if (scrollY >= brandsHeight) {
+      block.classList.add('scrolled');
+    } else {
+      block.classList.remove('scrolled');
+    }
   };
 
-  // Initial calculation
-  updateStickyPosition();
+  // Initial check
+  handleScroll();
 
-  // Update on scroll
-  window.addEventListener('scroll', updateStickyPosition, { passive: true });
-
-  // Recalculate on resize
-  window.addEventListener('resize', updateStickyPosition);
+  // Update on scroll with passive listener for better performance
+  window.addEventListener('scroll', handleScroll, { passive: true });
 
   // Resize handler
   window.addEventListener('resize', () => {
