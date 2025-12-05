@@ -2,7 +2,8 @@
   margin: 0 !important;
   display: block;
   width: 100%;
-  min-height: 400px;
+  /* Match children min-height to prevent CLS */
+  min-height: 502px;
   background-color: #f5f5f5;
 }
 
@@ -267,6 +268,14 @@
 
 /* Desktop styles - 992px+ (matching original desktop styles) */
 @media (width >= 992px) {
+  .carousel-hero {
+    min-height: 600px;
+  }
+
+  .carousel-hero .carousel-hero-slides-container {
+    min-height: 600px;
+  }
+
   .carousel-hero .carousel-hero-slide {
     align-items: flex-end;
     justify-content: center;

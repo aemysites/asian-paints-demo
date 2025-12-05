@@ -43,8 +43,8 @@
   --heading-font-size-s: 24px;
   --heading-font-size-xs: 22px;
 
-  /* nav height - accounts for full header (brand bar + main nav + secondary nav) */
-  --nav-height: 160px;
+  /* Header height - mobile first: 38px brand bar + 56px main header = 94px */
+  --nav-height: 94px;
   --header-height: var(--nav-height);
 }
 
@@ -78,6 +78,13 @@
   }
 }
 
+@media (width >= 992px) {
+  :root {
+    /* Desktop header: 48px brand bar + 56px main header + 48px nav bar = 152px */
+    --nav-height: 152px;
+  }
+}
+
 body {
   display: none;
   margin: 0;
@@ -93,10 +100,46 @@ body.appear {
 }
 
 header {
-  height: auto;
+  /* Fixed header - all styles here to prevent CLS when block CSS loads */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  /* 48px brand bar + 56px main header + 48px nav bar = 152px */
+  height: 152px;
+  /* Prevent header layout changes from affecting main content */
+  contain: strict;
+  overflow: hidden;
 }
 
-header .header,
+@media (width < 992px) {
+  header {
+    /* Mobile: 38px brand bar + 56px main header = 94px (nav bar hidden) */
+    height: 94px;
+  }
+}
+
+/* Push main content down to account for fixed header */
+main {
+  margin-top: var(--header-height);
+}
+
+/* Critical CSS for Fixed Color Partner to prevent CLS */
+.fixed-color-partner {
+  position: fixed !important;
+  left: 0 !important;
+  bottom: 50px !important;
+  z-index: 1036 !important;
+}
+
+header .header {
+  visibility: hidden;
+  /* Fixed height to prevent CLS during block decoration */
+  height: 100%;
+  min-height: inherit;
+}
+
 footer .footer {
   visibility: hidden;
 }
@@ -104,6 +147,11 @@ footer .footer {
 header .header[data-block-status="loaded"],
 footer .footer[data-block-status="loaded"] {
   visibility: visible;
+}
+
+/* Reserve minimum footer space to reduce CLS */
+footer {
+  min-height: 200px;
 }
 
 h1,

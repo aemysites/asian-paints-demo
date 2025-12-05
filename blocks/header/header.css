@@ -83,6 +83,8 @@
 .header .header-main {
   background-color: var(--header-white);
   border-bottom: 1px solid var(--header-border);
+  /* Fixed height to prevent CLS */
+  height: 56px;
 }
 
 .header .header-main > div {
@@ -93,6 +95,7 @@
   margin: 0 auto;
   padding: 4px 40px;
   gap: 24px;
+  height: 100%;
 }
 
 /* Main Logo */
@@ -331,6 +334,8 @@
 .header .header-nav-bar {
   background-color: var(--header-white);
   border-bottom: 1px solid var(--header-border);
+  /* Fixed height to prevent CLS */
+  height: 48px;
 }
 
 .header .header-nav-bar > div {
@@ -340,6 +345,7 @@
   max-width: var(--header-max-width);
   margin: 0 auto;
   padding: 0 40px;
+  height: 100%;
 }
 
 /* Navigation Left (Home + Main Nav) */
@@ -583,7 +589,11 @@
     height: 18px;
   }
 
-  /* Main Header */
+  /* Main Header - fixed height for mobile */
+  .header .header-main {
+    height: 56px;
+  }
+
   .header .header-main > div {
     padding: 10px 16px;
     gap: 12px;
@@ -768,28 +778,40 @@
 }
 
 /* ========================================
-   STICKY HEADER
+   FIXED HEADER - Entire header is fixed position
+   Note: header element styles are in styles.css to prevent CLS
    ======================================== */
-header {
-  position: relative;
-  z-index: 1000;
-}
 
-/* Brand bar stays in document flow */
+/* Brand bar - fixed at top */
 .header .header-brands {
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 1001;
+  height: 48px;
 }
 
-/* Fixed wrapper for main header and nav bar - always visible at top */
+/* Main header + nav bar wrapper - fixed below brand bar */
 .header .header-sticky {
   position: fixed;
+  top: 48px;
   left: 0;
   right: 0;
   z-index: 1000;
   background: var(--header-white);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-  transition: top 0.1s ease-out;
+}
+
+@media (width < 992px) {
+  /* Mobile header - height set in styles.css */
+  .header .header-brands {
+    height: 38px;
+  }
+
+  .header .header-sticky {
+    top: 38px;
+  }
 }
 
 /* ========================================

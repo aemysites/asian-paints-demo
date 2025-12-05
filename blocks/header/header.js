@@ -384,34 +384,6 @@ export default async function decorate(block) {
     }
   });
 
-  // Position sticky header below brands bar, adjust on scroll
-  const stickyHeader = block.querySelector('.header-sticky');
-  const brandsBar = block.querySelector('.header-brands');
-
-  const updateStickyPosition = () => {
-    if (!stickyHeader || !brandsBar) return;
-
-    const brandsHeight = brandsBar.offsetHeight;
-    const scrollY = window.scrollY || window.pageYOffset;
-
-    // Calculate top position: starts at brandsHeight, decreases to 0 as you scroll
-    const topPosition = Math.max(0, brandsHeight - scrollY);
-    stickyHeader.style.top = `${topPosition}px`;
-
-    // Add margin to brands bar to make space for content below fixed header
-    const stickyHeight = stickyHeader.offsetHeight;
-    brandsBar.style.marginBottom = `${stickyHeight}px`;
-  };
-
-  // Initial calculation
-  updateStickyPosition();
-
-  // Update on scroll
-  window.addEventListener('scroll', updateStickyPosition, { passive: true });
-
-  // Recalculate on resize
-  window.addEventListener('resize', updateStickyPosition);
-
   // Resize handler
   window.addEventListener('resize', () => {
     if (window.innerWidth >= 992) {
