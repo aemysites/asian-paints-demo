@@ -100,7 +100,9 @@ body.appear {
 }
 
 header {
-  /* Fixed header height - must match header block CSS exactly */
+  /* Fixed header - all styles here to prevent CLS when block CSS loads */
+  position: relative;
+  z-index: 1000;
   /* 48px brand bar + 56px main header + 48px nav bar = 152px */
   height: 152px;
 }

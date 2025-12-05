@@ -779,13 +779,8 @@
 
 /* ========================================
    FIXED HEADER - Entire header is fixed position
+   Note: header element styles are in styles.css to prevent CLS
    ======================================== */
-header {
-  position: relative;
-  z-index: 1000;
-  /* Reserve exact space for fixed header: 48px brand + 56px main + 48px nav = 152px */
-  height: 152px;
-}
 
 /* Brand bar - fixed at top */
 .header .header-brands {
@@ -809,11 +804,7 @@ header {
 }
 
 @media (width < 992px) {
-  header {
-    /* Mobile: 38px brand + 56px main = 94px (nav hidden) */
-    height: 94px;
-  }
-
+  /* Mobile header - height set in styles.css */
   .header .header-brands {
     height: 38px;
   }
